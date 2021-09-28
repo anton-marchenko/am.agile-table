@@ -4,6 +4,7 @@ coverage
 
 # compiled output
 /dist
+out/
 /tmp
 /out-tsc
 # Only exists if Bazel was run
@@ -59,3 +60,8 @@ tsconfig.spec.json
 src/main.ts
 src/polyfills.ts
 src/test.ts
+
+vendor/
+.bin/
+*.bundle.*
+.github/*

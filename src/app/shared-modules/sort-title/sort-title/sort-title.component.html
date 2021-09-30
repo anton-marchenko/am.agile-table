@@ -1,1 +1,4 @@
-<p>sort-title works!</p>
+<span [ngClass]="{ sort: sortable }" (click)="sortable && sort()">
+  <ng-content></ng-content>
+  <span *ngIf="sortable && dir" class="dir-icon">[{{ dir }}]</span>
+</span>

@@ -1,2 +1,102 @@
-<p>common-table works!</p>
-<app-sort-title></app-sort-title>
+<table border="1">
+  <tr>
+    <th>Action</th>
+    <th *ngFor="let col of mockColumns">
+      <ng-container *ngIf="col.type === 'explicit'">
+        <app-sort-title
+          [sortable]="col.sortable"
+          (sortChanges)="onSortChanges($event, col.alias, col.sortFn)"
+        >
+          {{ col.name }}
+        </app-sort-title>
+      </ng-container>
+
+      <ng-container
+        *ngIf="col.type === 'attributed'"
+        [ngSwitch]="col.attributeId"
+      >
+        <app-sort-title
+          [sortable]="col.sortable"
+          (sortChanges)="
+            onSortChanges(
+              $event,
+              resAttrSortField(col.cellType, col.attributeId),
+              col.sortFn
+            )
+          "
+        >
+          <span
+            [style.color]="
+              col.attributeId === PredefinedAttr.Name ? 'green' : null
+            "
+          >
+            {{ col.name }}
+          </span>
+        </app-sort-title>
+      </ng-container>
+    </th>
+  </tr>
+  <tr *ngFor="let feature of features">
+    <td>
+      <button (click)="edit(feature)">Edit</button>
+    </td>
+    <ng-container *ngFor="let col of mockColumns">
+      <td *ngIf="col.type === 'explicit'" (dblclick)="editCell()">
+        <ng-container [ngSwitch]="col.alias">
+          <ng-container *ngSwitchCase="'owner'">
+            {{ feature.explicit.owner?.name }}
+          </ng-container>
+          <ng-container *ngSwitchCase="'id'">
+            {{ feature.explicit.id }}
+          </ng-container>
+          <ng-container *ngSwitchDefault> --- </ng-container>
+        </ng-container>
+      </td>
+      <td *ngIf="col.type === 'attributed'" (dblclick)="editCell()">
+        <ng-container [ngSwitch]="col.cellType">
+          <ng-container *ngSwitchCase="'text'">
+            <ng-container
+              *ngIf="col.type === 'attributed'"
+              [ngSwitch]="col.attributeId"
+            >
+              <ng-container *ngSwitchCase="PredefinedAttr.Name">
+                <span style="color: green">
+                  {{ getTextValue(feature, col.attributeId)?.value }}
+                </span>
+              </ng-container>
+              <ng-container *ngSwitchDefault>
+                {{ getTextValue(feature, col.attributeId)?.value }}
+              </ng-container>
+            </ng-container>
+          </ng-container>
+          <ng-container *ngSwitchCase="'date'">
+            {{ getDateValue(feature, col.attributeId)?.value | date }}
+          </ng-container>
+          <ng-container *ngSwitchCase="'multiList'">
+            <ng-container *ngIf="col.cellType === 'multiList'">
+              {{ getMForm(col, feature) | json }}
+            </ng-container>
+
+            <ng-container
+              *ngFor="let item of getMultiListValue(feature, col.attributeId)"
+            >
+              <div *ngIf="tags$ | async as tagsState">
+                <ng-container *ngIf="tagsState.kind === 'loading'">
+                  Loading...
+                </ng-container>
+                <ng-container *ngIf="tagsState.kind === 'ok'">
+                  {{
+                    resolveDictionary(tagsState.data, item?.listItemId)?.name
+                  }}
+                </ng-container>
+              </div>
+            </ng-container>
+          </ng-container>
+          <ng-container *ngSwitchDefault>
+            {{ feature.attributed[col.cellType][col.attributeId] | json }}
+          </ng-container>
+        </ng-container>
+      </td>
+    </ng-container>
+  </tr>
+</table>

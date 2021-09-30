@@ -1,41 +1,27 @@
+import { DateVal, MultiListVal, TextVal } from '@shared/models/cell-value';
+
 export interface Cell<T> {
   // featureId: number;
   // attributeId: number;
   value: T;
 }
 
-type txtVal = {
-  etag?: string;
-  id?: number; //IS_NEW
-  value: string;
-};
-
-interface TextCell extends Cell<txtVal> {
+interface TextCell extends Cell<TextVal> {
   // value: string
 }
 
-type dtVal = {
-  etag?: string;
-  id?: number; //IS_NEW
-  value: Date;
-};
-
-interface DateCell extends Cell<dtVal> {
+interface DateCell extends Cell<DateVal> {
   // value: Date
 }
 
-type mlVal = {
-  etag?: string;
-  id?: number; //IS_NEW
-  listItemId: number;
-};
-
-interface MultiListCell extends Cell<mlVal[]> {
-  // value: Date
+interface MultiListCell extends Cell<MultiListVal[]> {
+  // value: Multilist
 }
+
+
 
 type Cells<T> = {
-  [key: string]: T;
+  [key: string]: T | undefined;
 };
 
 export type AttributedCells = {

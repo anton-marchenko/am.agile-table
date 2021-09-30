@@ -1,7 +1,7 @@
 import { DateVal, MultiListVal, TextVal } from '@shared/models/cell-value';
 
 export interface Cell<T> {
-  // featureId: number;
+  // rowId: number;
   // attributeId: number;
   value: T;
 }

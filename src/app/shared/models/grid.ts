@@ -14,7 +14,7 @@ type SortColumn = {
 };
 
 type EditColumn<I, O> = {
-  formValueFn: (value: I) => O;
+  formValueFn: (value?: I) => O;
 };
 
 type DateColEdit = EditColumn<DateVal, string>;

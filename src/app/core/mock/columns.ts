@@ -13,7 +13,6 @@ const sortAttrText: SortFn = (field, dir: 'asc' | 'desc') =>
 const sortAttrList: SortFn = (field, dir: 'asc' | 'desc') =>
   `${field}/ListItem/Item ${dir}`;
 
-
 export const mockColumns: GridColumn[] = [
   {
     type: 'explicit',
@@ -36,21 +35,21 @@ export const mockColumns: GridColumn[] = [
     name: 'Name',
     sortable: true,
     sortFn: sortAttrText,
-    formValueFn: (v: TextVal) => '',
+    formValueFn: (v?: TextVal) => '',
   },
   {
     type: 'attributed',
     cellType: 'text',
     attributeId: PredefinedAttr.Description,
     name: 'Descr',
-    formValueFn: (v: TextVal) => '',
+    formValueFn: (v?: TextVal) => '',
   },
   {
     type: 'attributed',
     cellType: 'date',
     attributeId: 3,
     name: 'Date',
-    formValueFn: (v: DateVal) => '',
+    formValueFn: (v?: DateVal) => 'ddd',
   },
   {
     type: 'attributed',
@@ -59,6 +58,7 @@ export const mockColumns: GridColumn[] = [
     name: 'Tags',
     sortable: true,
     sortFn: sortAttrList,
-    formValueFn: (v: MultiListVal[]) => v.map(el => el.listItemId),
+    formValueFn: (values?: MultiListVal[]) =>
+      values ? values.map((el) => el.listItemId) : [],
   },
 ];

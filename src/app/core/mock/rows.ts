@@ -1,6 +1,6 @@
 import { Row } from '@shared/models/row';
 
-export const features: Row[] = [
+export const rows: Row[] = [
   {
     explicit: {
       id: 1,

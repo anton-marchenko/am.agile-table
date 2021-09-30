@@ -36,49 +36,50 @@
       </ng-container>
     </th>
   </tr>
-  <tr *ngFor="let feature of features">
+  <tr *ngFor="let row of rows">
     <td>
-      <button (click)="edit(feature)">Edit</button>
+      <button (click)="edit(row)">Edit</button>
     </td>
     <ng-container *ngFor="let col of mockColumns">
       <td *ngIf="col.type === 'explicit'" (dblclick)="editCell()">
         <ng-container [ngSwitch]="col.alias">
           <ng-container *ngSwitchCase="'owner'">
-            {{ feature.explicit.owner?.name }}
+            {{ row.explicit.owner?.name }}
           </ng-container>
           <ng-container *ngSwitchCase="'id'">
-            {{ feature.explicit.id }}
+            {{ row.explicit.id }}
           </ng-container>
           <ng-container *ngSwitchDefault> --- </ng-container>
         </ng-container>
       </td>
       <td *ngIf="col.type === 'attributed'" (dblclick)="editCell()">
-        <ng-container [ngSwitch]="col.cellType">
-          <ng-container *ngSwitchCase="'text'">
+        <ng-container>
+          <ng-container *ngIf="col.cellType === 'text'">
             <ng-container
               *ngIf="col.type === 'attributed'"
               [ngSwitch]="col.attributeId"
             >
               <ng-container *ngSwitchCase="PredefinedAttr.Name">
                 <span style="color: green">
-                  {{ getTextValue(feature, col.attributeId)?.value }}
+                  {{ getTextValue(row, col.attributeId)?.value }}
                 </span>
               </ng-container>
               <ng-container *ngSwitchDefault>
-                {{ getTextValue(feature, col.attributeId)?.value }}
+                {{ getTextValue(row, col.attributeId)?.value }}
               </ng-container>
             </ng-container>
           </ng-container>
-          <ng-container *ngSwitchCase="'date'">
-            {{ getDateValue(feature, col.attributeId)?.value | date }}
+          <ng-container *ngIf="col.cellType === 'date'">
+            {{col.formValueFn(row.attributed.date[col.attributeId]?.value)}}
+            {{ getDateValue(row, col.attributeId)?.value | date }}
           </ng-container>
-          <ng-container *ngSwitchCase="'multiList'">
+          <ng-container *ngIf="col.cellType === 'multiList'">
+            {{ getMForm(col, row) | json }}
             <ng-container *ngIf="col.cellType === 'multiList'">
-              {{ getMForm(col, feature) | json }}
             </ng-container>
 
             <ng-container
-              *ngFor="let item of getMultiListValue(feature, col.attributeId)"
+              *ngFor="let item of getMultiListValue(row, col.attributeId)"
             >
               <div *ngIf="tags$ | async as tagsState">
                 <ng-container *ngIf="tagsState.kind === 'loading'">
@@ -91,9 +92,6 @@
                 </ng-container>
               </div>
             </ng-container>
-          </ng-container>
-          <ng-container *ngSwitchDefault>
-            {{ feature.attributed[col.cellType][col.attributeId] | json }}
           </ng-container>
         </ng-container>
       </td>

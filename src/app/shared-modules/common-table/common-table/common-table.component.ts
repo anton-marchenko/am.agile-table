@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { PredefinedAttr } from '@shared/models/predefined-attr';
 import { mockColumns } from '@core/mock/columns';
-import { features } from '@core/mock/features';
+import { rows } from '@core/mock/rows';
 import {
   GridColumn,
   MultiListColumn,
@@ -38,7 +38,7 @@ export type ResponseState<T> =
 })
 export class CommonTableComponent implements OnInit {
   readonly mockColumns = mockColumns;
-  readonly features = features;
+  readonly rows = rows;
   readonly sortDescriptor = new Map<string, string>();
   readonly PredefinedAttr = PredefinedAttr;
   readonly getTextValue = getTextValue;
@@ -53,19 +53,10 @@ export class CommonTableComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  getMForm(
-    col: {
-      name: string;
-      type: 'attributed';
-      cellType: 'multiList';
-      attributeId: number;
-      formValueFn: (v: MultiListVal[]) => number[];
-    },
-    feature: Row,
-  ) {
-    const res = feature.attributed.multiList[col.attributeId];
+  getMForm(col: MultiListColumn, row: Row) {
+    const res = row.attributed.multiList[col.attributeId];
 
-    return col.formValueFn(res.value);
+    return res ? col.formValueFn(res.value) : null;
   }
 
   onSortChanges(
@@ -89,8 +80,9 @@ export class CommonTableComponent implements OnInit {
     );
   }
 
-  edit(feature: Row) {
-    console.log('edit row', feature);
+  edit(row: Row) {
+
+    console.log('edit row', row);
   }
 
   editCell() {

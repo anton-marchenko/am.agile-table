@@ -1,6 +1,12 @@
 import { PredefinedAttr } from '@shared/models/predefined-attr';
 import { GridColumn, SortFn } from '@shared/models/grid';
-import { DateVal, MultiListVal, TextVal } from '@shared/models/cell-value';
+import { Row } from '@shared/models/row';
+import {
+  getDateValue,
+  getMultiListValue,
+  getTextValue,
+} from '@shared/models/cell.utils';
+import { unwrapNullable } from '@shared/utils/unwrap-nullable';
 
 const sortOwner: SortFn = (field, dir: 'asc' | 'desc') =>
   `Owner/DisplayName ${dir}`;
@@ -13,6 +19,21 @@ const sortAttrText: SortFn = (field, dir: 'asc' | 'desc') =>
 const sortAttrList: SortFn = (field, dir: 'asc' | 'desc') =>
   `${field}/ListItem/Item ${dir}`;
 
+const formTextValueFn = (attributeId: number) => (row: Row) => {
+  const textValue = getTextValue(unwrapNullable(row), attributeId);
+
+  return textValue?.value ?? '';
+};
+const formDateValueFn = (attributeId: number) => (row: Row) => {
+  const dateValue = getDateValue(unwrapNullable(row), attributeId);
+
+  return dateValue ? dateValue.value.toISOString() : '';
+};
+const formMultiListValueFn = (attributeId: number) => (row: Row) => {
+  const values = getMultiListValue(unwrapNullable(row), attributeId);
+  return values ? values.map((el) => el.listItemId) : [];
+};
+
 export const mockColumns: GridColumn[] = [
   {
     type: 'explicit',
@@ -20,6 +41,7 @@ export const mockColumns: GridColumn[] = [
     name: 'ID',
     sortable: true,
     sortFn: sortId,
+    resolveFormValue: (r: Row) => r.explicit.id || null,
   },
   {
     type: 'explicit',
@@ -27,6 +49,7 @@ export const mockColumns: GridColumn[] = [
     name: 'Owner',
     sortable: true,
     sortFn: sortOwner,
+    resolveFormValue: (r: Row) => r.explicit.owner.id || null,
   },
   {
     type: 'attributed',
@@ -35,21 +58,21 @@ export const mockColumns: GridColumn[] = [
     name: 'Name',
     sortable: true,
     sortFn: sortAttrText,
-    formValueFn: (v?: TextVal) => '',
+    resolveFormValue: formTextValueFn(PredefinedAttr.Name),
   },
   {
     type: 'attributed',
     cellType: 'text',
     attributeId: PredefinedAttr.Description,
     name: 'Descr',
-    formValueFn: (v?: TextVal) => '',
+    resolveFormValue: formTextValueFn(PredefinedAttr.Description),
   },
   {
     type: 'attributed',
     cellType: 'date',
     attributeId: 3,
     name: 'Date',
-    formValueFn: (v?: DateVal) => 'ddd',
+    resolveFormValue: formDateValueFn(3),
   },
   {
     type: 'attributed',
@@ -58,7 +81,6 @@ export const mockColumns: GridColumn[] = [
     name: 'Tags',
     sortable: true,
     sortFn: sortAttrList,
-    formValueFn: (values?: MultiListVal[]) =>
-      values ? values.map((el) => el.listItemId) : [],
+    resolveFormValue: formMultiListValueFn(4),
   },
 ];

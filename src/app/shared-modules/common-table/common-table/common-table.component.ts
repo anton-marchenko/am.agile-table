@@ -4,7 +4,6 @@ import { mockColumns } from '@core/mock/columns';
 import { rows } from '@core/mock/rows';
 import {
   GridColumn,
-  MultiListColumn,
   SortDirection,
   SortFn,
 } from '@shared/models/grid';
@@ -18,7 +17,7 @@ import {
 import { resAttrSortField } from '@shared/utils/sort.utils';
 import { unwrapNullable } from '@shared/utils/unwrap-nullable';
 import { BehaviorSubject } from 'rxjs';
-import { MultiListVal } from '@shared/models/cell-value';
+import { FormControl } from '@angular/forms';
 
 type Dictionary = {
   id: number;
@@ -53,12 +52,6 @@ export class CommonTableComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  getMForm(col: MultiListColumn, row: Row) {
-    const res = row.attributed.multiList[col.attributeId];
-
-    return res ? col.formValueFn(res.value) : null;
-  }
-
   onSortChanges(
     event: { dir: SortDirection },
     field: string,
@@ -81,12 +74,13 @@ export class CommonTableComponent implements OnInit {
   }
 
   edit(row: Row) {
-
-    console.log('edit row', row);
+    mockColumns.map((col) => {
+      console.log('ATTR', new FormControl(col.resolveFormValue(row)));
+    });
   }
 
-  editCell() {
-    console.log('edit cell');
+  editCell(col: GridColumn, row: Row) {
+    console.log('edit cell', col.resolveFormValue(row));
   }
 
   resolveDictionary(dict: { id: number; name: string }[], id: Nullish<number>) {

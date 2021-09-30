@@ -1,5 +1,5 @@
-import { CellType } from '@shared/models/cell';
-import { DateVal, MultiListVal, TextVal } from '@shared/models/cell-value';
+import { CellType, ExplicitCells } from '@shared/models/cell';
+import { Row } from '@shared/models/row';
 
 export type SortDirection = 'asc' | 'desc' | null;
 
@@ -13,30 +13,41 @@ type SortColumn = {
   sortFn?: SortFn;
 };
 
-type EditColumn<I, O> = {
-  formValueFn: (value?: I) => O;
+type FormValue<F> = {
+  resolveFormValue: (row: Row) => F;
 };
 
-type DateColEdit = EditColumn<DateVal, string>;
-type MultiColEdit = EditColumn<MultiListVal[], number[]>;
-type TxtColEdit = EditColumn<TextVal, string>;
+type DateColEdit = FormValue<string>;
+type MultiColEdit = FormValue<number[]>;
+type TxtColEdit = FormValue<string>;
 
-type TypedColumn<T extends CellType> = {
+type TypedAttrCol<T extends CellType> = {
   name: string;
   type: 'attributed';
   cellType: T;
   attributeId: number;
 };
 
-export type TextColumn = TypedColumn<'text'> & TxtColEdit;
-export type DateColumn = TypedColumn<'date'> & DateColEdit;
-export type MultiListColumn = TypedColumn<'multiList'> & MultiColEdit;
+export type TextColumn = TypedAttrCol<'text'> & TxtColEdit;
+export type DateColumn = TypedAttrCol<'date'> & DateColEdit;
+export type MultiListColumn = TypedAttrCol<'multiList'> & MultiColEdit;
 
-export type GridColumn =
-  | ({ name: string; type: 'explicit'; alias: string } & SortColumn)
-  | (TextColumn & SortColumn)
-  | (DateColumn & SortColumn)
-  | (MultiListColumn & SortColumn);
+export type AttrColumn = TextColumn | DateColumn | MultiListColumn;
+
+
+type TypedExplCol<A extends keyof ExplicitCells> = {
+  name: string;
+  type: 'explicit';
+  alias: A;
+};
+
+export type ExplColumn =
+  | (TypedExplCol<'owner'> & FormValue<string | null>)
+  | (TypedExplCol<'id'> & FormValue<number | null>);
+
+export type GridColumn = (ExplColumn | AttrColumn) & SortColumn;
+
+// | ({ name: string; type: 'explicit'; alias: string } & SortColumn)
 
 // | ({
 //     name: string;

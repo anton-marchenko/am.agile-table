@@ -41,7 +41,7 @@
       <button (click)="edit(row)">Edit</button>
     </td>
     <ng-container *ngFor="let col of mockColumns">
-      <td *ngIf="col.type === 'explicit'" (dblclick)="editCell()">
+      <td *ngIf="col.type === 'explicit'" (dblclick)="editCell(col, row)">
         <ng-container [ngSwitch]="col.alias">
           <ng-container *ngSwitchCase="'owner'">
             {{ row.explicit.owner?.name }}
@@ -52,8 +52,8 @@
           <ng-container *ngSwitchDefault> --- </ng-container>
         </ng-container>
       </td>
-      <td *ngIf="col.type === 'attributed'" (dblclick)="editCell()">
-        <ng-container>
+      <ng-container *ngIf="col.type === 'attributed'">
+        <td (dblclick)="editCell(col, row)">
           <ng-container *ngIf="col.cellType === 'text'">
             <ng-container
               *ngIf="col.type === 'attributed'"
@@ -70,13 +70,10 @@
             </ng-container>
           </ng-container>
           <ng-container *ngIf="col.cellType === 'date'">
-            {{col.formValueFn(row.attributed.date[col.attributeId]?.value)}}
             {{ getDateValue(row, col.attributeId)?.value | date }}
           </ng-container>
           <ng-container *ngIf="col.cellType === 'multiList'">
-            {{ getMForm(col, row) | json }}
-            <ng-container *ngIf="col.cellType === 'multiList'">
-            </ng-container>
+            <ng-container *ngIf="col.cellType === 'multiList'"> </ng-container>
 
             <ng-container
               *ngFor="let item of getMultiListValue(row, col.attributeId)"
@@ -93,8 +90,8 @@
               </div>
             </ng-container>
           </ng-container>
-        </ng-container>
-      </td>
+        </td>
+      </ng-container>
     </ng-container>
   </tr>
 </table>

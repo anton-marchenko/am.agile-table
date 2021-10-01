@@ -1,1 +1,4 @@
-<app-common-table></app-common-table>
+<app-common-table (editRow)="onEditRow($event)"></app-common-table>
+
+
+<app-row-edit-form [form]="form"></app-row-edit-form>

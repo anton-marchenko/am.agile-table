@@ -1,0 +1,11 @@
+<ng-container *ngIf="data$ | async as data">
+  <ng-container *ngIf="data.form">
+    <div *ngFor="let col of mockColumns" style="margin: 20px 0;">
+      <div style="margin-top: 8px;">{{ col.alias }}</div>
+      <div>
+        <input type="text" [formControl]="getControl(data.form, col.alias)" />
+      </div>
+    </div>
+    <button (click)="onSave(data.form)">Save</button>
+  </ng-container>
+</ng-container>

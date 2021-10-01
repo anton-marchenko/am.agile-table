@@ -2,11 +2,7 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { PredefinedAttr } from '@shared/models/predefined-attr';
 import { mockColumns } from '@core/mock/columns';
 import { rows } from '@core/mock/rows';
-import {
-  GridColumn,
-  SortDirection,
-  SortFn,
-} from '@shared/models/grid';
+import { GridColumn, SortDirection, SortFn } from '@shared/models/grid';
 import { Nullish } from '@shared/models/nullish';
 import { Row } from '@shared/models/row';
 import {
@@ -16,7 +12,8 @@ import {
 } from '@shared/models/cell.utils';
 import { resAttrSortField } from '@shared/utils/sort.utils';
 import { unwrapNullable } from '@shared/utils/unwrap-nullable';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
+import { delay, take, tap } from 'rxjs/operators';
 import { FormControl } from '@angular/forms';
 
 type Dictionary = {
@@ -50,7 +47,21 @@ export class CommonTableComponent implements OnInit {
 
   constructor() {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    of([
+      { id: 1, name: 'tag1' },
+      { id: 2, name: 'tag2' },
+    ])
+      .pipe(
+        tap(() => this.tags$.next({ kind: 'loading' })),
+        delay(1_000),
+        take(1),
+      )
+      .subscribe(
+        (res) => this.tags$.next({ kind: 'ok', data: res }),
+        (err) => this.tags$.next({ kind: 'error', error: 'Oooops' }),
+      );
+  }
 
   onSortChanges(
     event: { dir: SortDirection },

@@ -1,5 +1,4 @@
-import { CellType } from '@shared/models/cell';
-
+import { CellType } from '@shared/models/attributed';
 
 const typeToSort: Record<CellType, string> = {
   text: 'TextValue',

@@ -6,8 +6,8 @@ import {
   Output,
   EventEmitter,
 } from '@angular/core';
-import { SortDirection } from '@shared/models/grid';
-import { Nullish } from '@shared/models/nullish';
+import { SortDirection } from '@shared/models/common/sort-column.type';
+import { Nullish } from '@shared/models/common/nullish';
 
 @Component({
   selector: 'app-sort-title',

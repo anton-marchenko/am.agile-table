@@ -6,8 +6,8 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { mockColumns } from '@core/mock/columns';
-import { isAttributedCol, isExplicitCol } from '@shared/models/column.utils';
-import { ExplColumn } from '@shared/models/grid';
+import { isAttributedCol, isExplicitCol } from '@shared/models/column';
+import { Row } from '@shared/models/row';
 import { unwrapNullable } from '@shared/utils/unwrap-nullable';
 import { BehaviorSubject } from 'rxjs';
 
@@ -23,6 +23,8 @@ export class RowEditFormComponent implements OnInit {
   @Input() set form(form: FormGroup | null) {
     this.data$.next({ form });
   }
+
+  @Input() row: Row | null = null;
 
   readonly data$ = new BehaviorSubject<{ form: FormGroup | null }>({
     form: null,
@@ -43,23 +45,20 @@ export class RowEditFormComponent implements OnInit {
   onSave(form: FormGroup) {
     const result = form.getRawValue();
 
-    const rrr = this.mockColumns
-      .filter(isExplicitCol)
-      .reduce((acc, col) => {
-        return {
-          ...acc,
-          [col.alias]: col,
-        };
-      }, {});
+    const rrr = this.mockColumns.filter(isExplicitCol).reduce((acc, col) => {
+      return {
+        ...acc,
+        [col.alias]: col,
+      };
+    }, {});
 
-
-    this.mockColumns
-    .filter(isAttributedCol)
-    .map((col) => {
-      // FIXME - FP-TS
+    this.mockColumns.filter(isAttributedCol).map((col) => {
+      // FIXME - IO-TS
+      // https://github.com/gcanti/io-ts/blob/master/index.md#the-idea
+      // const newValue = result[col.alias];
       const newValue = result[col.alias];
 
-      // col.getRequests(row, newValue);
+      console.log(col.makeRequest(unwrapNullable(this.row), newValue));
     });
   }
 }

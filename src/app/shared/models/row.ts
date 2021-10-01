@@ -1,9 +1,9 @@
-import { AttributedCells } from '@shared/models/cell';
+// DEPENDENCY INC|VERSION?
+import { AttributedCells } from '@shared/models/attributed';
+import { ExplicitCells } from '@shared/models/explicit/expl-cell';
 
 export interface Row {
-  explicit: {
-    id: number;
-    owner: { id: string; name: string };
-  };
+  rowId: number;
+  explicit: ExplicitCells;
   attributed: AttributedCells;
 }

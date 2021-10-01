@@ -5,22 +5,21 @@ import {
   Output,
   EventEmitter,
 } from '@angular/core';
-import { PredefinedAttr } from '@shared/models/predefined-attr';
+import { PredefinedAttr, resAttrSortField } from '@shared/models/attributed';
 import { mockColumns } from '@core/mock/columns';
 import { rows } from '@core/mock/rows';
-import { GridColumn, SortDirection, SortFn } from '@shared/models/grid';
-import { Nullish } from '@shared/models/nullish';
+import { Nullish } from '@shared/models/common/nullish';
 import { Row } from '@shared/models/row';
-import {
-  getDateValue,
-  getMultiListValue,
-  getTextValue,
-} from '@shared/models/cell.utils';
-import { resAttrSortField } from '@shared/utils/sort.utils';
 import { unwrapNullable } from '@shared/utils/unwrap-nullable';
 import { BehaviorSubject, of } from 'rxjs';
 import { delay, take, tap } from 'rxjs/operators';
-import { FormControl, FormGroup } from '@angular/forms';
+import { SortDirection, SortFn } from '@shared/models/common/sort-column.type';
+import { GridColumn, isExplicitCol } from '@shared/models/column';
+import { isAttributedCol } from '@shared/models/column/column.utils';
+import { getTextValue } from '@shared/models/attributed/text/cell.utils';
+import { getDateValue } from '@shared/models/attributed/date/cell.utils';
+import { getMultiListValue } from '@shared/models/attributed/multi-list/cell.utils';
+import { getQueryExpand } from '@shared/models/http.utils';
 
 type Dictionary = {
   id: number;
@@ -51,11 +50,16 @@ export class CommonTableComponent implements OnInit {
     kind: 'loading',
   });
 
-  @Output() editRow = new EventEmitter<{ form: FormGroup }>();
+  @Output() editRow = new EventEmitter<{ row: Row, columns: GridColumn[] }>();
 
   constructor() {}
 
   ngOnInit(): void {
+    console.log(
+      '$expand=',
+      getQueryExpand(this.mockColumns.filter(isAttributedCol)),
+    );
+
     of([
       { id: 1, name: 'tag1' },
       { id: 2, name: 'tag2' },
@@ -93,16 +97,7 @@ export class CommonTableComponent implements OnInit {
   }
 
   onEditRow(row: Row) {
-    const cfg = mockColumns.reduce((acc, col) => {
-      return {
-        ...acc,
-        [col.alias]: new FormControl(col.resolveFormValue(row)),
-      };
-    }, {});
-
-    const form = new FormGroup(cfg);
-
-    this.editRow.emit({ form });
+    this.editRow.emit({ row, columns: mockColumns });
   }
 
   editCell(col: GridColumn, row: Row) {

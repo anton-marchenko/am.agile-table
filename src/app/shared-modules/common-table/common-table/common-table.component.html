@@ -2,7 +2,7 @@
   <tr>
     <th>Action</th>
     <th *ngFor="let col of mockColumns">
-      <ng-container *ngIf="col.type === 'explicit'">
+      <ng-container *ngIf="col.kind === 'explicit'">
         <app-sort-title
           [sortable]="col.sortable"
           (sortChanges)="onSortChanges($event, col.alias, col.sortFn)"
@@ -12,7 +12,7 @@
       </ng-container>
 
       <ng-container
-        *ngIf="col.type === 'attributed'"
+        *ngIf="col.kind === 'attributed'"
         [ngSwitch]="col.attributeId"
       >
         <app-sort-title
@@ -41,22 +41,22 @@
       <button (click)="onEditRow(row)">Edit</button>
     </td>
     <ng-container *ngFor="let col of mockColumns">
-      <td *ngIf="col.type === 'explicit'" (dblclick)="editCell(col, row)">
+      <td *ngIf="col.kind === 'explicit'" (dblclick)="editCell(col, row)">
         <ng-container [ngSwitch]="col.alias">
           <ng-container *ngSwitchCase="'owner'">
             {{ row.explicit.owner?.name }}
           </ng-container>
-          <ng-container *ngSwitchCase="'id'">
-            {{ row.explicit.id }}
+          <ng-container *ngSwitchCase="'rating'">
+            {{ row.explicit.rating }}
           </ng-container>
           <ng-container *ngSwitchDefault> --- </ng-container>
         </ng-container>
       </td>
-      <ng-container *ngIf="col.type === 'attributed'">
+      <ng-container *ngIf="col.kind === 'attributed'">
         <td (dblclick)="editCell(col, row)">
           <ng-container *ngIf="col.cellType === 'text'">
             <ng-container
-              *ngIf="col.type === 'attributed'"
+              *ngIf="col.kind === 'attributed'"
               [ngSwitch]="col.attributeId"
             >
               <ng-container *ngSwitchCase="PredefinedAttr.Name">

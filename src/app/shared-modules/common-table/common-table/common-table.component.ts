@@ -1,4 +1,10 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ChangeDetectionStrategy,
+  Output,
+  EventEmitter,
+} from '@angular/core';
 import { PredefinedAttr } from '@shared/models/predefined-attr';
 import { mockColumns } from '@core/mock/columns';
 import { rows } from '@core/mock/rows';
@@ -14,7 +20,7 @@ import { resAttrSortField } from '@shared/utils/sort.utils';
 import { unwrapNullable } from '@shared/utils/unwrap-nullable';
 import { BehaviorSubject, of } from 'rxjs';
 import { delay, take, tap } from 'rxjs/operators';
-import { FormControl } from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
 
 type Dictionary = {
   id: number;
@@ -44,6 +50,8 @@ export class CommonTableComponent implements OnInit {
   readonly tags$ = new BehaviorSubject<ResponseState<Dictionary[]>>({
     kind: 'loading',
   });
+
+  @Output() editRow = new EventEmitter<{ form: FormGroup }>();
 
   constructor() {}
 
@@ -84,10 +92,17 @@ export class CommonTableComponent implements OnInit {
     );
   }
 
-  edit(row: Row) {
-    mockColumns.map((col) => {
-      console.log('ATTR', new FormControl(col.resolveFormValue(row)));
-    });
+  onEditRow(row: Row) {
+    const cfg = mockColumns.reduce((acc, col) => {
+      return {
+        ...acc,
+        [col.alias]: new FormControl(col.resolveFormValue(row)),
+      };
+    }, {});
+
+    const form = new FormGroup(cfg);
+
+    this.editRow.emit({ form });
   }
 
   editCell(col: GridColumn, row: Row) {

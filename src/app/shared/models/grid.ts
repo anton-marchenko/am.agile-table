@@ -26,6 +26,7 @@ type TypedAttrCol<T extends CellType> = {
   type: 'attributed';
   cellType: T;
   attributeId: number;
+  alias: string;
 };
 
 export type TextColumn = TypedAttrCol<'text'> & TxtColEdit;

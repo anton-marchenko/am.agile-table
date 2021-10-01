@@ -38,7 +38,7 @@
   </tr>
   <tr *ngFor="let row of rows">
     <td>
-      <button (click)="edit(row)">Edit</button>
+      <button (click)="onEditRow(row)">Edit</button>
     </td>
     <ng-container *ngFor="let col of mockColumns">
       <td *ngIf="col.type === 'explicit'" (dblclick)="editCell(col, row)">

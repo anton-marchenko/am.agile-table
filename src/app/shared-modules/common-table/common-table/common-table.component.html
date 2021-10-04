@@ -1,97 +1,137 @@
-<table border="1">
+<ng-template #noDataTpl> NO DATA </ng-template>
+<ng-template #noRowsDataTpl>
   <tr>
-    <th>Action</th>
-    <th *ngFor="let col of mockColumns">
-      <ng-container *ngIf="col.kind === 'explicit'">
-        <app-sort-title
-          [sortable]="col.sortable"
-          (sortChanges)="onSortChanges($event, col.alias, col.sortFn)"
-        >
-          {{ col.name }}
-        </app-sort-title>
-      </ng-container>
+    <td>NO ROWS</td>
+  </tr>
+</ng-template>
 
-      <ng-container
-        *ngIf="col.kind === 'attributed'"
-        [ngSwitch]="col.attributeId"
-      >
-        <app-sort-title
-          [sortable]="col.sortable"
-          (sortChanges)="
-            onSortChanges(
-              $event,
-              resAttrSortField(col.cellType, col.attributeId),
-              col.sortFn
-            )
-          "
-        >
-          <span
-            [style.color]="
-              col.attributeId === PredefinedAttr.Name ? 'green' : null
-            "
+<ng-container *ngIf="columnsState$ | async as columnsState; else noDataTpl">
+  <ng-container *ngIf="columnsState.kind === 'error'">err</ng-container>
+  <ng-container *ngIf="columnsState.kind === 'loading'"
+    >loading...</ng-container
+  >
+  <ng-container *ngIf="columnsState.kind === 'ok'">
+    <table border="1">
+      <tr>
+        <th>Action</th>
+        <th *ngFor="let col of columnsState.data">
+          <ng-container *ngIf="col.kind === 'explicit'">
+            <app-sort-title
+              [sortable]="col.sortable"
+              (sortChanges)="onSortChanges($event, col.alias, col.sortFn)"
+            >
+              {{ col.name }}
+            </app-sort-title>
+          </ng-container>
+
+          <ng-container
+            *ngIf="col.kind === 'attributed'"
+            [ngSwitch]="col.attributeId"
           >
-            {{ col.name }}
-          </span>
-        </app-sort-title>
-      </ng-container>
-    </th>
-  </tr>
-  <tr *ngFor="let row of rows">
-    <td>
-      <button (click)="onEditRow(row)">Edit</button>
-    </td>
-    <ng-container *ngFor="let col of mockColumns">
-      <td *ngIf="col.kind === 'explicit'" (dblclick)="editCell(col, row)">
-        <ng-container [ngSwitch]="col.alias">
-          <ng-container *ngSwitchCase="'owner'">
-            {{ row.explicit.owner?.name }}
+            <app-sort-title
+              [sortable]="col.sortable"
+              (sortChanges)="
+                onSortChanges(
+                  $event,
+                  resAttrSortField(col.cellType, col.attributeId),
+                  col.sortFn
+                )
+              "
+            >
+              <span
+                [style.color]="
+                  col.attributeId === PredefinedAttr.Name ? 'green' : null
+                "
+              >
+                {{ col.name }}
+              </span>
+            </app-sort-title>
           </ng-container>
-          <ng-container *ngSwitchCase="'rating'">
-            {{ row.explicit.rating }}
-          </ng-container>
-          <ng-container *ngSwitchDefault> --- </ng-container>
+        </th>
+      </tr>
+      <ng-container *ngIf="rowsState$ | async as rowsState; else noRowsDataTpl">
+        <ng-container *ngIf="rowsState.kind === 'error'">
+          <tr>
+            <td [attr.colspan]="columnsState.data.length + 1">ERR</td>
+          </tr>
         </ng-container>
-      </td>
-      <ng-container *ngIf="col.kind === 'attributed'">
-        <td (dblclick)="editCell(col, row)">
-          <ng-container *ngIf="col.cellType === 'text'">
-            <ng-container
-              *ngIf="col.kind === 'attributed'"
-              [ngSwitch]="col.attributeId"
-            >
-              <ng-container *ngSwitchCase="PredefinedAttr.Name">
-                <span style="color: green">
-                  {{ getTextValue(row, col.attributeId)?.value }}
-                </span>
-              </ng-container>
-              <ng-container *ngSwitchDefault>
-                {{ getTextValue(row, col.attributeId)?.value }}
+        <ng-container *ngIf="rowsState.kind === 'loading'">
+          <tr>
+            <td [attr.colspan]="columnsState.data.length + 1">LOADING...</td>
+          </tr>
+        </ng-container>
+        <ng-container *ngIf="rowsState.kind === 'ok'">
+          <tr *ngFor="let row of rowsState.data">
+            <td>
+              <button (click)="onEditRow(row, columnsState.data)">Edit</button>
+            </td>
+            <ng-container *ngFor="let col of columnsState.data">
+              <td
+                *ngIf="col.kind === 'explicit'"
+                (dblclick)="editCell(col, row)"
+              >
+                <ng-container [ngSwitch]="col.alias">
+                  <ng-container *ngSwitchCase="'owner'">
+                    {{ row.explicit.owner?.name }}
+                  </ng-container>
+                  <ng-container *ngSwitchCase="'rating'">
+                    {{ row.explicit.rating }}
+                  </ng-container>
+                  <ng-container *ngSwitchDefault> --- </ng-container>
+                </ng-container>
+              </td>
+              <ng-container *ngIf="col.kind === 'attributed'">
+                <td (dblclick)="editCell(col, row)">
+                  <ng-container *ngIf="col.cellType === 'text'">
+                    <ng-container
+                      *ngIf="col.kind === 'attributed'"
+                      [ngSwitch]="col.attributeId"
+                    >
+                      <ng-container *ngSwitchCase="PredefinedAttr.Name">
+                        <span style="color: green">
+                          {{ getTextValue(row, col.attributeId)?.value }}
+                        </span>
+                      </ng-container>
+                      <ng-container *ngSwitchDefault>
+                        {{ getTextValue(row, col.attributeId)?.value }}
+                      </ng-container>
+                    </ng-container>
+                  </ng-container>
+                  <ng-container *ngIf="col.cellType === 'date'">
+                    {{ getDateValue(row, col.attributeId)?.value | date }}
+                  </ng-container>
+                  <ng-container *ngIf="col.cellType === 'multiList'">
+                    <ng-container *ngIf="col.dictionary$ | async as dictState">
+                      <ng-container *ngIf="dictState.kind === 'error'">
+                        ERROR
+                      </ng-container>
+                      <ng-container *ngIf="dictState.kind === 'loading'">
+                        Loading...
+                      </ng-container>
+                      <ng-container *ngIf="dictState.kind === 'ok'">
+                        <ng-container
+                          *ngFor="
+                            let item of getMultiListValue(row, col.attributeId)
+                          "
+                        >
+                          <div>
+                            {{
+                              resolveDictionary(
+                                dictState.data,
+                                item?.listItemId
+                              )?.name
+                            }}
+                          </div>
+                        </ng-container>
+                      </ng-container>
+                    </ng-container>
+                  </ng-container>
+                </td>
               </ng-container>
             </ng-container>
-          </ng-container>
-          <ng-container *ngIf="col.cellType === 'date'">
-            {{ getDateValue(row, col.attributeId)?.value | date }}
-          </ng-container>
-          <ng-container *ngIf="col.cellType === 'multiList'">
-            <ng-container *ngIf="col.cellType === 'multiList'"> </ng-container>
-
-            <ng-container
-              *ngFor="let item of getMultiListValue(row, col.attributeId)"
-            >
-              <div *ngIf="tags$ | async as tagsState">
-                <ng-container *ngIf="tagsState.kind === 'loading'">
-                  Loading...
-                </ng-container>
-                <ng-container *ngIf="tagsState.kind === 'ok'">
-                  {{
-                    resolveDictionary(tagsState.data, item?.listItemId)?.name
-                  }}
-                </ng-container>
-              </div>
-            </ng-container>
-          </ng-container>
-        </td>
+          </tr>
+        </ng-container>
       </ng-container>
-    </ng-container>
-  </tr>
-</table>
+    </table>
+  </ng-container>
+</ng-container>

@@ -4,32 +4,22 @@ import {
   ChangeDetectionStrategy,
   Output,
   EventEmitter,
+  Input,
 } from '@angular/core';
 import { PredefinedAttr, resAttrSortField } from '@shared/models/attributed';
-import { mockColumns } from '@core/mock/columns';
-import { rows } from '@core/mock/rows';
 import { Nullish } from '@shared/models/common/nullish';
 import { Row } from '@shared/models/row';
 import { unwrapNullable } from '@shared/utils/unwrap-nullable';
-import { BehaviorSubject, of } from 'rxjs';
-import { delay, take, tap } from 'rxjs/operators';
+import { BehaviorSubject} from 'rxjs';
 import { SortDirection, SortFn } from '@shared/models/common/sort-column.type';
-import { GridColumn, isExplicitCol } from '@shared/models/column';
-import { isAttributedCol } from '@shared/models/column/column.utils';
+import { GridColumn } from '@shared/models/column';
 import { getTextValue } from '@shared/models/attributed/text/cell.utils';
 import { getDateValue } from '@shared/models/attributed/date/cell.utils';
 import { getMultiListValue } from '@shared/models/attributed/multi-list/cell.utils';
-import { getQueryExpand } from '@shared/models/http.utils';
+import { ResponseState } from '@shared/models/response-state';
+import { DictionaryItem } from '@shared/models/dictionary';
 
-type Dictionary = {
-  id: number;
-  name: string;
-};
-
-export type ResponseState<T> =
-  | { kind: 'error'; error?: string }
-  | { kind: 'loading' }
-  | { kind: 'ok'; data: T };
+type ColState = ResponseState<GridColumn[]> | null;
 
 @Component({
   selector: 'app-common-table',
@@ -38,42 +28,32 @@ export type ResponseState<T> =
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CommonTableComponent implements OnInit {
-  readonly mockColumns = mockColumns;
-  readonly rows = rows;
+  @Input() set columnsState(state: ResponseState<GridColumn[]> | null) {
+    this.columnsState$.next(state);
+  }
+
+  @Input() set rowsState(state: ResponseState<Row[]> | null) {
+    this.rowsState$.next(state);
+  }
+
+  @Input() columnsState$ = new BehaviorSubject<ColState>({ kind: 'loading' });
+  @Input() rowsState$ = new BehaviorSubject<ResponseState<Row[]> | null>({
+    kind: 'loading',
+  });
+
+  // readonly rows = rows;
   readonly sortDescriptor = new Map<string, string>();
   readonly PredefinedAttr = PredefinedAttr;
   readonly getTextValue = getTextValue;
   readonly getDateValue = getDateValue;
   readonly getMultiListValue = getMultiListValue;
   readonly resAttrSortField = resAttrSortField;
-  readonly tags$ = new BehaviorSubject<ResponseState<Dictionary[]>>({
-    kind: 'loading',
-  });
 
-  @Output() editRow = new EventEmitter<{ row: Row, columns: GridColumn[] }>();
+  @Output() editRow = new EventEmitter<{ row: Row; columns: GridColumn[] }>();
 
   constructor() {}
 
-  ngOnInit(): void {
-    console.log(
-      '$expand=',
-      getQueryExpand(this.mockColumns.filter(isAttributedCol)),
-    );
-
-    of([
-      { id: 1, name: 'tag1' },
-      { id: 2, name: 'tag2' },
-    ])
-      .pipe(
-        tap(() => this.tags$.next({ kind: 'loading' })),
-        delay(1_000),
-        take(1),
-      )
-      .subscribe(
-        (res) => this.tags$.next({ kind: 'ok', data: res }),
-        (err) => this.tags$.next({ kind: 'error', error: 'Oooops' }),
-      );
-  }
+  ngOnInit(): void {}
 
   onSortChanges(
     event: { dir: SortDirection },
@@ -96,15 +76,15 @@ export class CommonTableComponent implements OnInit {
     );
   }
 
-  onEditRow(row: Row) {
-    this.editRow.emit({ row, columns: mockColumns });
+  onEditRow(row: Row, columns: GridColumn[]) {
+    this.editRow.emit({ row, columns });
   }
 
   editCell(col: GridColumn, row: Row) {
     console.log('edit cell', col.resolveFormValue(row));
   }
 
-  resolveDictionary(dict: { id: number; name: string }[], id: Nullish<number>) {
+  resolveDictionary(dict: DictionaryItem<number>[], id: Nullish<number>) {
     return dict.find((el) => el.id === id);
   }
 }

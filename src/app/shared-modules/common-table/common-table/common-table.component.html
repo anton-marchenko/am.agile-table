@@ -11,24 +11,24 @@
     >loading...</ng-container
   >
   <ng-container *ngIf="columnsState.kind === 'ok'">
-    <table border="1">
+    <table class="table">
       <tr>
         <th>Action</th>
         <th *ngFor="let col of columnsState.data">
           <ng-container *ngIf="col.kind === 'explicit'">
-            <app-sort-title
+            <am-sort-title
               [sortable]="col.sortable"
               (sortChanges)="onSortChanges($event, col.alias, col.sortFn)"
             >
               {{ col.name }}
-            </app-sort-title>
+            </am-sort-title>
           </ng-container>
 
           <ng-container
             *ngIf="col.kind === 'attributed'"
             [ngSwitch]="col.attributeId"
           >
-            <app-sort-title
+            <am-sort-title
               [sortable]="col.sortable"
               (sortChanges)="
                 onSortChanges(
@@ -45,7 +45,7 @@
               >
                 {{ col.name }}
               </span>
-            </app-sort-title>
+            </am-sort-title>
           </ng-container>
         </th>
       </tr>

@@ -1,6 +1,6 @@
 import { CellType } from '@shared/models/attributed';
 
-const typeToSort: Record<CellType, string> = {
+const typeToSort: Readonly<Record<CellType, string>> = {
   text: 'TextValue',
   date: 'DateValue',
   multiList: 'MultiListValue',

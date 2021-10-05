@@ -1,7 +1,4 @@
-
 export type ExplicitCells = {
-  rating: number;
-  owner: { id: string; name: string };
+  readonly rating: number;
+  readonly owner: { readonly id: string; readonly name: string };
 };
-
-

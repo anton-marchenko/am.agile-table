@@ -1,5 +1,5 @@
 import { AttrRequest } from '@shared/models/attributed/http/attr-request';
 
-type TextReqBase = { Value: string };
+type TextReqBase = { readonly Value: string };
 
 export type TextRequest = AttrRequest<TextReqBase>;

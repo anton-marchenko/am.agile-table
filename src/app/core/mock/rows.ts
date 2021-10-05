@@ -1,11 +1,11 @@
 import { Row } from '@shared/models/row';
 
-export const rows: Row[] = [
+export const rows: ReadonlyArray<Row> = [
   {
     rowId: 1,
     explicit: {
       rating: 1,
-      owner: { id: '1', name: 'Ant' },
+      owner: { id: '1x', name: 'Ant' },
     },
     attributed: {
       text: {
@@ -29,7 +29,7 @@ export const rows: Row[] = [
     rowId: 2,
     explicit: {
       rating: 5,
-      owner: { id: '2', name: 'Lex' },
+      owner: { id: '2x', name: 'Lex' },
     },
     attributed: {
       text: {

@@ -1,4 +1,6 @@
 export type DictionaryItem<T> = {
-  id: T;
-  name: string;
+  readonly id: T;
+  readonly name: string;
 };
+
+export type Dictionary<T> = ReadonlyArray<DictionaryItem<T>>;

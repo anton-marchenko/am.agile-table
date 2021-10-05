@@ -4,8 +4,10 @@ import { GridColumn } from '@shared/models/column';
 import { sortId, sortOwner } from '@shared/models/explicit/sort-column.utils';
 import { getTextRequests } from '@shared/models/attributed/text/http.utils';
 import { formTextValueFn } from '@shared/models/attributed/text/form.utils';
-import { formDateValueFn } from '@shared/models/attributed/date/form.utils';
-import { getDateRequests } from '@shared/models/attributed/date/http.utils';
+import {
+  formDateValueFn,
+  getDateRequests,
+} from '@shared/models/attributed/date';
 import { formMultiListValueFn } from '@shared/models/attributed/multi-list/form.utils';
 import { getMultiListRequests } from '@shared/models/attributed/multi-list/http.utils';
 import { sortAttrText } from '@shared/models/attributed/text/column.utils';
@@ -13,37 +15,38 @@ import { sortAttrList } from '@shared/models/attributed/multi-list/column.utils'
 import { concat, Observable, of } from 'rxjs';
 import { delay } from 'rxjs/operators';
 import { ResponseState } from '@shared/models/response-state';
-import { DictionaryItem } from '@shared/models/dictionary';
+import { Dictionary } from '@shared/models/dictionary';
 
-const q1: Observable<ResponseState<DictionaryItem<number>[]>> = of({ kind: 'loading' });
-const q2: Observable<ResponseState<DictionaryItem<number>[]>> = of({
+const q1: Observable<ResponseState<Dictionary<number>>> = of({
+  kind: 'loading',
+});
+const q2: Observable<ResponseState<Dictionary<number>>> = of({
   kind: 'ok',
   data: [
     { id: 1, name: 'tag1' },
     { id: 2, name: 'tag2' },
+    { id: 3, name: 'tag3' },
+    { id: 4, name: 'tag4' },
   ],
-} as ResponseState<DictionaryItem<number>[]>).pipe(delay(1_000));
+} as ResponseState<Dictionary<number>>).pipe(delay(1_000));
 
-const u1: Observable<ResponseState<DictionaryItem<string>[]>> = of({ kind: 'loading' });
-const u2: Observable<ResponseState<DictionaryItem<string>[]>> = of({
+const u1: Observable<ResponseState<Dictionary<string>>> = of({
+  kind: 'loading',
+});
+const u2: Observable<ResponseState<Dictionary<string>>> = of({
   kind: 'ok',
   data: [
-    { id: '1xxx', name: 'User1' },
-    { id: '2xxx', name: 'User2' },
+    { id: '1x', name: 'Ant' },
+    { id: '2x', name: 'Lex' },
+    { id: '3x', name: 'User3' },
   ],
-} as ResponseState<DictionaryItem<string>[]>).pipe(delay(1_000));
+} as ResponseState<Dictionary<string>>).pipe(delay(1_000));
 
-const tags$: Observable<ResponseState<DictionaryItem<number>[]>> = concat(
-  q1,
-  q2,
-);
+const tags$: Observable<ResponseState<Dictionary<number>>> = concat(q1, q2);
 
-const users$: Observable<ResponseState<DictionaryItem<string>[]>> = concat(
-  u1,
-  u2,
-);
+const users$: Observable<ResponseState<Dictionary<string>>> = concat(u1, u2);
 
-export const mockColumns: GridColumn[] = [
+export const mockColumns: ReadonlyArray<GridColumn> = [
   {
     kind: 'explicit',
     alias: 'rating',

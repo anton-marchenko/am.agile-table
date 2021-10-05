@@ -1,4 +1,4 @@
 export type CellValue = {
-  etag: string;
-  id: number;
+  readonly etag: string;
+  readonly id: number;
 };

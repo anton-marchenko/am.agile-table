@@ -1,11 +1,31 @@
 <ng-container *ngIf="data$ | async as data">
-  <ng-container *ngIf="data.form">
-    <div *ngFor="let col of mockColumns" style="margin: 20px 0;">
-      <div style="margin-top: 8px;">{{ col.alias }}</div>
-      <div>
-        <input type="text" [formControl]="getControl(data.form, col.alias)" />
+  <div *ngIf="data.form" class="form-box">
+    <div *ngFor="let col of mockColumns" style="margin-bottom: 10px">
+      <div style="margin-bottom: 2px; font-weight: bold">{{ col.name }}</div>
+      <div *ngIf="col.kind === 'explicit'">
+        <ng-container *ngIf="col.alias === 'owner'">
+          <am-list-control
+            [dictionary]="col.dictionary$ | async"
+            [formControl]="getControl(data.form, col.alias)"
+          ></am-list-control>
+        </ng-container>
+        <ng-container *ngIf="col.alias !== 'owner'">
+          <input type="text" [formControl]="getControl(data.form, col.alias)" />
+        </ng-container>
+      </div>
+      <div *ngIf="col.kind === 'attributed'">
+        <div *ngIf="col.cellType !== 'multiList'">
+          <input type="text" [formControl]="getControl(data.form, col.alias)" />
+        </div>
+        <div *ngIf="col.cellType === 'multiList'">
+          <am-list-control
+            [multiple]="true"
+            [dictionary]="col.dictionary$ | async"
+            [formControl]="getControl(data.form, col.alias)"
+          ></am-list-control>
+        </div>
       </div>
     </div>
     <button (click)="onSave(data.form)">Save</button>
-  </ng-container>
+  </div>
 </ng-container>

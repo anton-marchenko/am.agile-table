@@ -1,9 +1,9 @@
 export interface Cell<T> {
   // rowId: number;
   // attributeId: number;
-  value: T;
+  readonly value: T;
 }
 
 export type Cells<T> = {
-  [key: string]: T | undefined;
+  readonly [key: string]: T | undefined;
 };

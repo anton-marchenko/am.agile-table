@@ -6,6 +6,6 @@ export type SortFn = (
 ) => string;
 
 export type SortColumn = {
-  sortable?: boolean;
-  sortFn?: SortFn;
+  readonly sortable?: boolean;
+  readonly sortFn?: SortFn;
 };

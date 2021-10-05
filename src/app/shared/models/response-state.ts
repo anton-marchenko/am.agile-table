@@ -1,4 +1,4 @@
 export type ResponseState<T> =
-  | { kind: 'error'; error?: string }
-  | { kind: 'loading' }
-  | { kind: 'ok'; data: T };
+  | { readonly kind: 'error'; readonly error?: string }
+  | { readonly kind: 'loading' }
+  | { readonly kind: 'ok'; readonly data: T };

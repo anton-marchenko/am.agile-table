@@ -1,4 +1,4 @@
-import { DateColumn } from '@shared/models/attributed/date/column';
+import { DateColumn } from '@shared/models/attributed/date';
 import { MultiListColumn } from '@shared/models/attributed/multi-list/column';
 import { TextColumn } from '@shared/models/attributed/text/column';
 

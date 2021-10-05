@@ -9,19 +9,19 @@ import { BehaviorSubject, of } from 'rxjs';
 import { delay, take, tap } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-root',
+  selector: 'am-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent implements OnInit {
-  readonly columns$ = new BehaviorSubject<ResponseState<GridColumn[]>>(
+  readonly columns$ = new BehaviorSubject<ResponseState<ReadonlyArray<GridColumn>>>(
     {
       kind: 'loading',
     },
   );
 
-  readonly rows$ = new BehaviorSubject<ResponseState<Row[]>>(
+  readonly rows$ = new BehaviorSubject<ResponseState<ReadonlyArray<Row>>>(
     {
       kind: 'loading',
     },
@@ -35,7 +35,7 @@ export class AppComponent implements OnInit {
     of(mockColumns)
       .pipe(
         tap(() => this.columns$.next({ kind: 'loading' })),
-        delay(1_000),
+        delay(500),
         take(1),
       )
       .subscribe(
@@ -46,7 +46,7 @@ export class AppComponent implements OnInit {
       of(rows)
       .pipe(
         tap(() => this.rows$.next({ kind: 'loading' })),
-        delay(2_000),
+        delay(500),
         take(1),
       )
       .subscribe(
@@ -56,12 +56,12 @@ export class AppComponent implements OnInit {
   }
 
   // TODO - how to refactor?
-  onEditRow(event: { row: Row; columns: GridColumn[] }) {
+  onEditRow(event: { row: Row; columns: ReadonlyArray<GridColumn> }) {
     this.form = this.createForm(event.row, event.columns);
     this.row = event.row;
   }
 
-  private createForm(row: Row, columns: GridColumn[]) {
+  private createForm(row: Row, columns: ReadonlyArray<GridColumn>) {
     const cfg = columns.reduce((acc, col) => {
       return {
         ...acc,

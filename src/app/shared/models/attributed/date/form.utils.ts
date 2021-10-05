@@ -1,4 +1,4 @@
-import { getDateValue } from '@shared/models/attributed/date/cell.utils';
+import { getDateValue } from '@shared/models/attributed/date';
 import { Row } from '@shared/models/row';
 import { unwrapNullable } from '@shared/utils/unwrap-nullable';
 

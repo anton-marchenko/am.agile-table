@@ -1,0 +1,26 @@
+<ng-template #noDataTpl> No data </ng-template>
+
+<ng-container *ngIf="dictionary; else noDataTpl">
+  <ng-container *ngIf="dictionary.kind === 'error'">
+    <select disabled class="select">
+      <option selected>No data</option>
+    </select>
+  </ng-container>
+  <ng-container *ngIf="dictionary.kind === 'loading'">
+    <select disabled class="select">
+      <option selected>Loading...</option>
+    </select>
+  </ng-container>
+  <ng-container *ngIf="dictionary.kind === 'ok'">
+    <select
+      class="select"
+      [multiple]="multiple"
+      [ngModel]="selectedItems"
+      (ngModelChange)="changeValue($event)"
+    >
+      <ng-container *ngFor="let item of dictionary.data">
+        <option [value]="item.id">{{ item.name }}</option>
+      </ng-container>
+    </select>
+  </ng-container>
+</ng-container>

@@ -1,7 +1,7 @@
-<app-common-table
+<am-common-table
   [columnsState]="columns$ | async"
   [rowsState]="rows$ | async"
   (editRow)="onEditRow($event)"
-></app-common-table>
+></am-common-table>
 
-<app-row-edit-form [form]="form" [row]="row"></app-row-edit-form>
+<am-row-edit-form [form]="form" [row]="row"></am-row-edit-form>

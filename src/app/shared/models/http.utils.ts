@@ -1,7 +1,8 @@
 import { AttrColumn, CellType } from '@shared/models/attributed';
 import { ExplColumn } from '@shared/models/explicit/expl-column';
 
-const typeToCategory: Record<CellType, string> = {
+// FIXME - duplicate with sort
+const typeToCategory: Readonly<Record<CellType, string>> = {
   text: 'TextValues',
   date: 'DateValues',
   multiList: 'MultiListValues',
@@ -10,11 +11,11 @@ const typeToCategory: Record<CellType, string> = {
 export const resAttrTypeTest = (type: CellType) =>
 `${typeToCategory[type]}`;
 
-export const getQuerySelect = (columns: ExplColumn[]) =>
+export const getQuerySelect = (columns: ReadonlyArray<ExplColumn>) =>
   columns.map((col) => col.name).join(',');
 
-export const getQueryExpand = (columns: AttrColumn[]) => {
-  const accR: { [key: string]: number[] } = {};
+export const getQueryExpand = (columns: ReadonlyArray<AttrColumn>) => {
+  const accR: { [key: string]: ReadonlyArray<number> } = {};
 
   const attrSelect = columns.reduce((acc, col) => {
     const name = resAttrTypeTest(col.cellType);
@@ -27,7 +28,7 @@ export const getQueryExpand = (columns: AttrColumn[]) => {
     };
   }, accR);
 
-  const resolveFilter = (value: number[]) => value.length === 1
+  const resolveFilter = (value: ReadonlyArray<number>) => value.length === 1
   ? `AttributeId eq ${value[0]}`
   : `AttributeId in (${value.join()})`;
 

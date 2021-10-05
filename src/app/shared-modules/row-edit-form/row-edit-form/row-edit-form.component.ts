@@ -12,7 +12,7 @@ import { unwrapNullable } from '@shared/utils/unwrap-nullable';
 import { BehaviorSubject } from 'rxjs';
 
 @Component({
-  selector: 'app-row-edit-form',
+  selector: 'am-row-edit-form',
   templateUrl: './row-edit-form.component.html',
   styleUrls: ['./row-edit-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -43,7 +43,11 @@ export class RowEditFormComponent implements OnInit {
   }
 
   onSave(form: FormGroup) {
+    // TODO ################################
+    // some validators in particular status
+    // some - in all status (picture size)
     const result = form.getRawValue();
+    console.log(result);
 
     const rrr = this.mockColumns.filter(isExplicitCol).reduce((acc, col) => {
       return {

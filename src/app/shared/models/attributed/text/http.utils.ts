@@ -5,7 +5,7 @@ import { unwrapNullable } from '@shared/utils/unwrap-nullable';
 
 export const getTextRequests =
   (attributeId: number) =>
-  (row: Row, newValue: string): TextRequest[] => {
+  (row: Row, newValue: string): ReadonlyArray<TextRequest> => {
     const oldValue = row.attributed.text[attributeId]?.value;
     const isNew = !oldValue;
 

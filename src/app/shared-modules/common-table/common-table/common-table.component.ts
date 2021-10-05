@@ -14,30 +14,30 @@ import { BehaviorSubject} from 'rxjs';
 import { SortDirection, SortFn } from '@shared/models/common/sort-column.type';
 import { GridColumn } from '@shared/models/column';
 import { getTextValue } from '@shared/models/attributed/text/cell.utils';
-import { getDateValue } from '@shared/models/attributed/date/cell.utils';
+import { getDateValue } from '@shared/models/attributed/date';
 import { getMultiListValue } from '@shared/models/attributed/multi-list/cell.utils';
 import { ResponseState } from '@shared/models/response-state';
-import { DictionaryItem } from '@shared/models/dictionary';
+import { Dictionary } from '@shared/models/dictionary';
 
-type ColState = ResponseState<GridColumn[]> | null;
+type ColState = ResponseState<ReadonlyArray<GridColumn>> | null;
 
 @Component({
-  selector: 'app-common-table',
+  selector: 'am-common-table',
   templateUrl: './common-table.component.html',
   styleUrls: ['./common-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CommonTableComponent implements OnInit {
-  @Input() set columnsState(state: ResponseState<GridColumn[]> | null) {
+  @Input() set columnsState(state: ResponseState<ReadonlyArray<GridColumn>> | null) {
     this.columnsState$.next(state);
   }
 
-  @Input() set rowsState(state: ResponseState<Row[]> | null) {
+  @Input() set rowsState(state: ResponseState<ReadonlyArray<Row>> | null) {
     this.rowsState$.next(state);
   }
 
   @Input() columnsState$ = new BehaviorSubject<ColState>({ kind: 'loading' });
-  @Input() rowsState$ = new BehaviorSubject<ResponseState<Row[]> | null>({
+  @Input() rowsState$ = new BehaviorSubject<ResponseState<ReadonlyArray<Row>> | null>({
     kind: 'loading',
   });
 
@@ -49,7 +49,7 @@ export class CommonTableComponent implements OnInit {
   readonly getMultiListValue = getMultiListValue;
   readonly resAttrSortField = resAttrSortField;
 
-  @Output() editRow = new EventEmitter<{ row: Row; columns: GridColumn[] }>();
+  @Output() editRow = new EventEmitter<{ row: Row; columns: ReadonlyArray<GridColumn> }>();
 
   constructor() {}
 
@@ -76,7 +76,7 @@ export class CommonTableComponent implements OnInit {
     );
   }
 
-  onEditRow(row: Row, columns: GridColumn[]) {
+  onEditRow(row: Row, columns: ReadonlyArray<GridColumn>) {
     this.editRow.emit({ row, columns });
   }
 
@@ -84,7 +84,7 @@ export class CommonTableComponent implements OnInit {
     console.log('edit cell', col.resolveFormValue(row));
   }
 
-  resolveDictionary(dict: DictionaryItem<number>[], id: Nullish<number>) {
+  resolveDictionary(dict: Dictionary<number>, id: Nullish<number>) {
     return dict.find((el) => el.id === id);
   }
 }

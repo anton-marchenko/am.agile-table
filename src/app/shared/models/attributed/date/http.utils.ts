@@ -5,7 +5,7 @@ import { unwrapNullable } from '@shared/utils/unwrap-nullable';
 
 export const getDateRequests =
   (attributeId: number) =>
-  (row: Row, newValue: string): DateRequest[] => {
+  (row: Row, newValue: string): ReadonlyArray<DateRequest> => {
     const oldValue = row.attributed.date[attributeId]?.value;
     const isNew = !oldValue;
 

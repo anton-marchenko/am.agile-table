@@ -10,7 +10,7 @@ import { PredefinedAttr, resAttrSortField } from '@shared/models/attributed';
 import { Nullish } from '@shared/models/common/nullish';
 import { Row } from '@shared/models/row';
 import { unwrapNullable } from '@shared/utils/unwrap-nullable';
-import { BehaviorSubject} from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { SortDirection, SortFn } from '@shared/models/common/sort-column.type';
 import { GridColumn } from '@shared/models/column';
 import { getTextValue } from '@shared/models/attributed/text/cell.utils';
@@ -28,7 +28,9 @@ type ColState = ResponseState<ReadonlyArray<GridColumn>> | null;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CommonTableComponent implements OnInit {
-  @Input() set columnsState(state: ResponseState<ReadonlyArray<GridColumn>> | null) {
+  @Input() set columnsState(
+    state: ResponseState<ReadonlyArray<GridColumn>> | null,
+  ) {
     this.columnsState$.next(state);
   }
 
@@ -37,7 +39,9 @@ export class CommonTableComponent implements OnInit {
   }
 
   @Input() columnsState$ = new BehaviorSubject<ColState>({ kind: 'loading' });
-  @Input() rowsState$ = new BehaviorSubject<ResponseState<ReadonlyArray<Row>> | null>({
+  @Input() rowsState$ = new BehaviorSubject<ResponseState<
+    ReadonlyArray<Row>
+  > | null>({
     kind: 'loading',
   });
 
@@ -49,7 +53,10 @@ export class CommonTableComponent implements OnInit {
   readonly getMultiListValue = getMultiListValue;
   readonly resAttrSortField = resAttrSortField;
 
-  @Output() editRow = new EventEmitter<{ row: Row; columns: ReadonlyArray<GridColumn> }>();
+  @Output() editRow = new EventEmitter<{
+    row: Row;
+    columns: ReadonlyArray<GridColumn>;
+  }>();
 
   constructor() {}
 

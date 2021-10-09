@@ -15,17 +15,15 @@ import { delay, take, tap } from 'rxjs/operators';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent implements OnInit {
-  readonly columns$ = new BehaviorSubject<ResponseState<ReadonlyArray<GridColumn>>>(
-    {
-      kind: 'loading',
-    },
-  );
+  readonly columns$ = new BehaviorSubject<
+    ResponseState<ReadonlyArray<GridColumn>>
+  >({
+    kind: 'loading',
+  });
 
-  readonly rows$ = new BehaviorSubject<ResponseState<ReadonlyArray<Row>>>(
-    {
-      kind: 'loading',
-    },
-  );
+  readonly rows$ = new BehaviorSubject<ResponseState<ReadonlyArray<Row>>>({
+    kind: 'loading',
+  });
 
   title = 'agile-table';
   form: FormGroup | null = null;
@@ -43,7 +41,7 @@ export class AppComponent implements OnInit {
         (err) => this.columns$.next({ kind: 'error', error: 'Oooops' }),
       );
 
-      of(rows)
+    of(rows)
       .pipe(
         tap(() => this.rows$.next({ kind: 'loading' })),
         delay(500),

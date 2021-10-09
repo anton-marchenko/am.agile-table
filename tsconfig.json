@@ -8,7 +8,7 @@
       "@shared/*": ["src/app/shared/*"],
       "@shared-modules/*": ["src/app/shared-modules/*"],
       "@modules/*": ["src/app/modules/*"],
-      "@app/*": ["src/app/*"],
+      "@app/*": ["src/app/*"]
     },
     "outDir": "./dist/out-tsc",
     "forceConsistentCasingInFileNames": true,

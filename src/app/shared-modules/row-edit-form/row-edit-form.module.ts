@@ -7,10 +7,6 @@ import { ListControlModule } from '@shared-modules/controls/list-control/list-co
 @NgModule({
   declarations: [RowEditFormComponent],
   exports: [RowEditFormComponent],
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    ListControlModule,
-  ],
+  imports: [CommonModule, ReactiveFormsModule, ListControlModule],
 })
 export class RowEditFormModule {}

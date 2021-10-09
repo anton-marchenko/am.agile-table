@@ -8,9 +8,8 @@ describe('RowEditFormComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ RowEditFormComponent ]
-    })
-    .compileComponents();
+      declarations: [RowEditFormComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

@@ -4,7 +4,10 @@ import { Row } from '@shared/models/row';
 
 export const getMultiListRequests =
   (attributeId: number) =>
-  (row: Row, newValue: ReadonlyArray<number>): ReadonlyArray<MultiListRequest> => {
+  (
+    row: Row,
+    newValue: ReadonlyArray<number>,
+  ): ReadonlyArray<MultiListRequest> => {
     const oldValue = row.attributed.multiList[attributeId]?.value;
     const isNew = !oldValue || !oldValue.length;
 

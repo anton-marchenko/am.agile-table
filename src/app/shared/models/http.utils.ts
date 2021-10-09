@@ -8,8 +8,7 @@ const typeToCategory: Readonly<Record<CellType, string>> = {
   multiList: 'MultiListValues',
 };
 
-export const resAttrTypeTest = (type: CellType) =>
-`${typeToCategory[type]}`;
+export const resAttrTypeTest = (type: CellType) => `${typeToCategory[type]}`;
 
 export const getQuerySelect = (columns: ReadonlyArray<ExplColumn>) =>
   columns.map((col) => col.name).join(',');
@@ -28,13 +27,13 @@ export const getQueryExpand = (columns: ReadonlyArray<AttrColumn>) => {
     };
   }, accR);
 
-  const resolveFilter = (value: ReadonlyArray<number>) => value.length === 1
-  ? `AttributeId eq ${value[0]}`
-  : `AttributeId in (${value.join()})`;
+  const resolveFilter = (value: ReadonlyArray<number>) =>
+    value.length === 1
+      ? `AttributeId eq ${value[0]}`
+      : `AttributeId in (${value.join()})`;
 
   const res = Object.entries(attrSelect).map(
-    ([attrType, ids]) =>
-      `${attrType}($filter=${resolveFilter(ids)})`,
+    ([attrType, ids]) => `${attrType}($filter=${resolveFilter(ids)})`,
   );
 
   return '$expand=' + res.join(',');

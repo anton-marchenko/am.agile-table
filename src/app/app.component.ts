@@ -2,11 +2,13 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { mockColumns } from '@core/mock/columns';
 import { rows } from '@core/mock/rows';
-import { GridColumn } from '@shared/models/column';
+import { GridColumn } from '@shared/models/table';
 import { ResponseState } from '@shared/models/response-state';
-import { Row } from '@shared/models/row';
+import { Row } from '@shared/models/table';
 import { BehaviorSubject, of } from 'rxjs';
 import { delay, take, tap } from 'rxjs/operators';
+
+type State<T> = ResponseState<ReadonlyArray<T>> | null;
 
 @Component({
   selector: 'am-root',
@@ -15,14 +17,14 @@ import { delay, take, tap } from 'rxjs/operators';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent implements OnInit {
-  readonly columns$ = new BehaviorSubject<
-    ResponseState<ReadonlyArray<GridColumn>>
-  >({
-    kind: 'loading',
+  readonly columns$ = new BehaviorSubject<State<GridColumn>>({
+    kind: 'ok',
+    data: [],
   });
 
-  readonly rows$ = new BehaviorSubject<ResponseState<ReadonlyArray<Row>>>({
-    kind: 'loading',
+  readonly rows$ = new BehaviorSubject<State<Row>>({
+    kind: 'ok',
+    data: [],
   });
 
   title = 'agile-table';
@@ -44,7 +46,7 @@ export class AppComponent implements OnInit {
     of(rows)
       .pipe(
         tap(() => this.rows$.next({ kind: 'loading' })),
-        delay(500),
+        delay(900),
         take(1),
       )
       .subscribe(

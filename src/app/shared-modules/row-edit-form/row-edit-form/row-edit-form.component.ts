@@ -6,8 +6,8 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { mockColumns } from '@core/mock/columns';
-import { isAttributedCol, isExplicitCol } from '@shared/models/column';
-import { Row } from '@shared/models/row';
+import { isAttributedCol, isExplicitCol } from '@shared/models/table';
+import { Row } from '@shared/models/table';
 import { unwrapNullable } from '@shared/utils/unwrap-nullable';
 import { BehaviorSubject } from 'rxjs';
 

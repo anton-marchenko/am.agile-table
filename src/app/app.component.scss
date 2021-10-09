@@ -1,0 +1,14 @@
+:host {
+  display: flex;
+  height: 100%;
+}
+
+.left-side {
+  flex-grow: 1;
+  padding: 10px;
+}
+
+.right-side {
+  width: 300px;
+  padding: 10px;
+}

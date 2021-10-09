@@ -1,19 +1,30 @@
 <ng-template #noDataTpl> NO DATA </ng-template>
-<ng-template #noRowsDataTpl>
+<ng-template #colsMsgTpl let-text="text">
+  <div class="table-msg">
+    {{ text || "---" }}
+  </div>
+</ng-template>
+<ng-template #rowsMsgTpl let-columns="columns" let-text="text">
   <tr>
-    <td>NO ROWS</td>
+    <td [attr.colspan]="columns || 1">{{ text || "---" }}</td>
   </tr>
 </ng-template>
 
 <ng-container *ngIf="columnsState$ | async as columnsState; else noDataTpl">
-  <ng-container *ngIf="columnsState.kind === 'error'">err</ng-container>
-  <ng-container *ngIf="columnsState.kind === 'loading'"
-    >loading...</ng-container
-  >
+  <ng-container *ngIf="columnsState.kind === 'warning'">
+    <ng-container
+      *ngTemplateOutlet="
+        colsMsgTpl;
+        context: {
+          text: columnsState.message
+        }
+      "
+    ></ng-container>
+  </ng-container>
   <ng-container *ngIf="columnsState.kind === 'ok'">
     <table class="table">
       <tr>
-        <th>Action</th>
+        <th class="action-col">Action</th>
         <th *ngFor="let col of columnsState.data">
           <ng-container *ngIf="col.kind === 'explicit'">
             <am-sort-title
@@ -49,20 +60,21 @@
           </ng-container>
         </th>
       </tr>
-      <ng-container *ngIf="rowsState$ | async as rowsState; else noRowsDataTpl">
-        <ng-container *ngIf="rowsState.kind === 'error'">
-          <tr>
-            <td [attr.colspan]="columnsState.data.length + 1">ERR</td>
-          </tr>
-        </ng-container>
-        <ng-container *ngIf="rowsState.kind === 'loading'">
-          <tr>
-            <td [attr.colspan]="columnsState.data.length + 1">LOADING...</td>
-          </tr>
+      <ng-container *ngIf="rowsState$ | async as rowsState; else noDataTpl">
+        <ng-container *ngIf="rowsState.kind === 'warning'">
+          <ng-container
+            *ngTemplateOutlet="
+              rowsMsgTpl;
+              context: {
+                columns: getColumnsQty(columnsState.data),
+                text: rowsState.message
+              }
+            "
+          ></ng-container>
         </ng-container>
         <ng-container *ngIf="rowsState.kind === 'ok'">
           <tr *ngFor="let row of rowsState.data">
-            <td>
+            <td class="action-col">
               <button (click)="onEditRow(row, columnsState.data)">Edit</button>
             </td>
             <ng-container *ngFor="let col of columnsState.data">
@@ -71,8 +83,8 @@
                 (dblclick)="editCell(col, row)"
               >
                 <ng-container [ngSwitch]="col.alias">
-                  <ng-container *ngSwitchCase="'owner'">
-                    {{ row.explicit.owner?.name }}
+                  <ng-container *ngSwitchCase="'author'">
+                    {{ row.explicit.author?.name }}
                   </ng-container>
                   <ng-container *ngSwitchCase="'rating'">
                     {{ row.explicit.rating }}

@@ -3,19 +3,24 @@
     <div *ngFor="let col of mockColumns" style="margin-bottom: 10px">
       <div style="margin-bottom: 2px; font-weight: bold">{{ col.name }}</div>
       <div *ngIf="col.kind === 'explicit'">
-        <ng-container *ngIf="col.alias === 'owner'">
+        <ng-container *ngIf="col.alias === 'author'">
           <am-list-control
             [dictionary]="col.dictionary$ | async"
             [formControl]="getControl(data.form, col.alias)"
           ></am-list-control>
         </ng-container>
-        <ng-container *ngIf="col.alias !== 'owner'">
+        <ng-container *ngIf="col.alias === 'rating'">
           <input type="text" [formControl]="getControl(data.form, col.alias)" />
         </ng-container>
       </div>
       <div *ngIf="col.kind === 'attributed'">
-        <div *ngIf="col.cellType !== 'multiList'">
+        <div *ngIf="col.cellType === 'text'">
           <input type="text" [formControl]="getControl(data.form, col.alias)" />
+        </div>
+        <div *ngIf="col.cellType === 'date'">
+          <am-date-control
+            [formControl]="getControl(data.form, col.alias)"
+          ></am-date-control>
         </div>
         <div *ngIf="col.cellType === 'multiList'">
           <am-list-control

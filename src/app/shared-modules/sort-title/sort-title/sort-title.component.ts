@@ -6,8 +6,8 @@ import {
   Output,
   EventEmitter,
 } from '@angular/core';
-import { SortDirection } from '@shared/models/common/sort-column.type';
-import { Nullish } from '@shared/models/common/nullish';
+import { SortDirection } from '@shared/models/table';
+import { Nullish } from '@shared/models/nullish';
 import { BehaviorSubject } from 'rxjs';
 
 @Component({

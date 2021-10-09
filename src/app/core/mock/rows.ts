@@ -1,11 +1,12 @@
-import { Row } from '@shared/models/row';
+import { Row } from '@shared/models/table';
 
+// export const rows: ReadonlyArray<Row> = [];
 export const rows: ReadonlyArray<Row> = [
   {
     rowId: 1,
     explicit: {
       rating: 1,
-      owner: { id: '1x', name: 'Ant' },
+      author: { id: '1x', name: 'Ant' },
     },
     attributed: {
       text: {
@@ -29,7 +30,7 @@ export const rows: ReadonlyArray<Row> = [
     rowId: 2,
     explicit: {
       rating: 5,
-      owner: { id: '2x', name: 'Lex' },
+      author: { id: '2x', name: 'Lex' },
     },
     attributed: {
       text: {

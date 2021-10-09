@@ -1,7 +1,12 @@
-<am-common-table
-  [columnsState]="columns$ | async"
-  [rowsState]="rows$ | async"
-  (editRow)="onEditRow($event)"
-></am-common-table>
+<div class="left-side">
+  <am-common-table
+    [columnsState]="columns$ | async"
+    [rowsState]="rows$ | async"
+    (editRow)="onEditRow($event)"
+  ></am-common-table>
 
-<am-row-edit-form [form]="form" [row]="row"></am-row-edit-form>
+  <am-row-edit-form [form]="form" [row]="row"></am-row-edit-form>
+</div>
+<div class="right-side">
+  right
+</div>

@@ -1,17 +1,17 @@
-import { PredefinedAttr } from '@shared/models/attributed';
-import { Row } from '@shared/models/row';
-import { GridColumn } from '@shared/models/column';
-import { sortId, sortOwner } from '@shared/models/explicit/sort-column.utils';
-import { getTextRequests } from '@shared/models/attributed/text/http.utils';
-import { formTextValueFn } from '@shared/models/attributed/text/form.utils';
+import { Row } from '@shared/models/table';
+import { GridColumn } from '@shared/models/table';
+import { PredefinedAttr } from '@shared/models/table/attributed';
+import { sortId, sortAuthor } from '@shared/models/table';
+import { getTextRequests } from '@shared/models/table/attributed/type/text/http.utils';
+import { formTextValueFn } from '@shared/models/table/attributed/type/text/form.utils';
 import {
   formDateValueFn,
   getDateRequests,
-} from '@shared/models/attributed/date';
-import { formMultiListValueFn } from '@shared/models/attributed/multi-list/form.utils';
-import { getMultiListRequests } from '@shared/models/attributed/multi-list/http.utils';
-import { sortAttrText } from '@shared/models/attributed/text/column.utils';
-import { sortAttrList } from '@shared/models/attributed/multi-list/column.utils';
+} from '@shared/models/table/attributed/type/date';
+import { formMultiListValueFn } from '@shared/models/table/attributed/type/multi-list/form.utils';
+import { getMultiListRequests } from '@shared/models/table/attributed/type/multi-list/http.utils';
+import { sortAttrText } from '@shared/models/table/attributed/type/text/column.utils';
+import { sortAttrList } from '@shared/models/table/attributed/type/multi-list/column.utils';
 import { concat, Observable, of } from 'rxjs';
 import { delay } from 'rxjs/operators';
 import { ResponseState } from '@shared/models/response-state';
@@ -46,6 +46,7 @@ const tags$: Observable<ResponseState<Dictionary<number>>> = concat(q1, q2);
 
 const users$: Observable<ResponseState<Dictionary<string>>> = concat(u1, u2);
 
+// export const mockColumns: ReadonlyArray<GridColumn> = [];
 export const mockColumns: ReadonlyArray<GridColumn> = [
   {
     kind: 'explicit',
@@ -57,11 +58,11 @@ export const mockColumns: ReadonlyArray<GridColumn> = [
   },
   {
     kind: 'explicit',
-    alias: 'owner',
-    name: 'Owner',
+    alias: 'author',
+    name: 'Author',
     sortable: true,
-    sortFn: sortOwner,
-    resolveFormValue: (r: Row) => r.explicit.owner.id || null,
+    sortFn: sortAuthor,
+    resolveFormValue: (r: Row) => r.explicit.author.id || null,
     dictionary$: users$,
   },
   {

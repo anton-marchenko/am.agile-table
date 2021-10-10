@@ -1,0 +1,25 @@
+<form [formGroup]="form">
+  <div class="item-box">
+    <div class="row">
+      <div class="label">Title</div>
+      <div class="input-box">
+        <input type="text" formControlName="title" />
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="label">Width</div>
+      <div class="input-box input-box__short">
+        <input type="number" formControlName="width" />
+      </div>
+    </div>
+
+    <div class="row last">
+      <div class="label">
+        <label>
+          Sortable <input type="checkbox" formControlName="sortable" />
+        </label>
+      </div>
+    </div>
+  </div>
+</form>

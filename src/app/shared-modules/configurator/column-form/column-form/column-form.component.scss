@@ -1,0 +1,31 @@
+.item-box {
+  display: flex;
+  padding: 10px 5px;
+  margin: 5px 0;
+  border: 1px solid #ddd;
+}
+
+.label {
+  margin-bottom: 2px;
+  font-weight: bold;
+}
+
+.row {
+  margin-left: 8px;
+
+  &.last {
+    margin-bottom: 0;
+  }
+}
+
+.input-box {
+  width: 80px;
+
+  &__short {
+    width: 50px;
+  }
+
+  input {
+    width: 100%;
+  }
+}

@@ -8,6 +8,12 @@ import { Row } from '@shared/models/table';
 import { BehaviorSubject, of } from 'rxjs';
 import { delay, take, tap } from 'rxjs/operators';
 
+// FIXME duplicate
+type ColumnsChangeEvent = {
+  columns: ReadonlyArray<GridColumn>;
+};
+
+// FIXME duplicate
 type State<T> = ResponseState<ReadonlyArray<T>> | null;
 
 @Component({
@@ -59,6 +65,10 @@ export class AppComponent implements OnInit {
   onEditRow(event: { row: Row; columns: ReadonlyArray<GridColumn> }) {
     this.form = this.createForm(event.row, event.columns);
     this.row = event.row;
+  }
+
+  onColumnsChange({ columns }: ColumnsChangeEvent) {
+    this.columns$.next({ kind: 'ok', data: columns })
   }
 
   private createForm(row: Row, columns: ReadonlyArray<GridColumn>) {

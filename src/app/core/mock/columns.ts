@@ -60,6 +60,7 @@ export const mockColumns: ReadonlyArray<GridColumn> = [
     kind: 'explicit',
     alias: 'author',
     name: 'Author',
+    width: 100,
     sortable: true,
     sortFn: sortAuthor,
     resolveFormValue: (r: Row) => r.explicit.author.id || null,

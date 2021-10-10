@@ -6,9 +6,21 @@
 .left-side {
   flex-grow: 1;
   padding: 10px;
+  overflow: auto;
 }
 
 .right-side {
-  width: 300px;
-  padding: 10px;
+  flex-shrink: 0;
+  width: 270px;
+  position: relative;
+  border-left: 1px solid #ddd;
+
+  &__inner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: auto;
+    height: 100%;
+    padding: 10px;
+  }
 }

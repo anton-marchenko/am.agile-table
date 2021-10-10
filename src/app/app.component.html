@@ -8,5 +8,9 @@
   <am-row-edit-form [form]="form" [row]="row"></am-row-edit-form>
 </div>
 <div class="right-side">
-  right
+  <am-attribute-configurator
+    class="right-side__inner"
+    [columnsState]="columns$ | async"
+    (columnsChange)="onColumnsChange($event)"
+  ></am-attribute-configurator>
 </div>

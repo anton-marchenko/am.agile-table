@@ -1,0 +1,36 @@
+<ng-template #noDataTpl> NO DATA </ng-template>
+<ng-template #colsMsgTpl let-text="text">
+  <div class="table-msg">
+    {{ text || "---" }}
+  </div>
+</ng-template>
+
+<ng-container *ngIf="columnsState$ | async as columnsState; else noDataTpl">
+  <ng-container *ngIf="columnsState.kind === 'warning'">
+    <ng-container
+      *ngTemplateOutlet="
+        colsMsgTpl;
+        context: {
+          text: columnsState.message
+        }
+      "
+    ></ng-container>
+  </ng-container>
+  <ng-container *ngIf="columnsState.kind === 'ok'">
+    <div>
+      <span style="margin-right: 4px">Create column:</span>
+      <button (click)="onAddTextColumn(columnsState.data)" style="margin-right: 4px">
+        Text
+      </button>
+      <button (click)="onAddDateColumn(columnsState.data)">Date</button>
+    </div>
+    <ng-container *ngFor="let col of columnsState.data">
+      <ng-container *ngIf="col.kind === 'explicit'">
+        <am-column-form [column]="col" (valueChanges)="onValueChanges($event, columnsState.data)"></am-column-form>
+      </ng-container>
+      <ng-container *ngIf="col.kind === 'attributed'">
+        <am-column-form [column]="col" (valueChanges)="onValueChanges($event, columnsState.data)"></am-column-form>
+      </ng-container>
+    </ng-container>
+  </ng-container>
+</ng-container>

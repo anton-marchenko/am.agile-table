@@ -25,7 +25,7 @@
     <table class="table">
       <tr>
         <th class="action-col">Action</th>
-        <th *ngFor="let col of columnsState.data">
+        <th *ngFor="let col of columnsState.data" [attr.width]="col.width">
           <ng-container *ngIf="col.kind === 'explicit'">
             <am-sort-title
               [sortable]="col.sortable"

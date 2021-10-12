@@ -1,6 +1,6 @@
 <ng-container *ngIf="data$ | async as data">
   <div *ngIf="data.form" class="form-box">
-    <div *ngFor="let col of mockColumns" style="margin-bottom: 10px">
+    <div *ngFor="let col of columns" style="margin-bottom: 10px">
       <div style="margin-bottom: 2px; font-weight: bold">{{ col.name }}</div>
       <div *ngIf="col.kind === 'explicit'">
         <ng-container *ngIf="col.alias === 'author'">

@@ -5,8 +5,7 @@ import {
   Input,
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { mockColumns } from '@core/mock/columns';
-import { isAttributedCol, isExplicitCol } from '@shared/models/table';
+import { GridColumn, isAttributedCol, isExplicitCol } from '@shared/models/table';
 import { Row } from '@shared/models/table';
 import { unwrapNullable } from '@shared/utils/unwrap-nullable';
 import { BehaviorSubject } from 'rxjs';
@@ -18,13 +17,12 @@ import { BehaviorSubject } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RowEditFormComponent implements OnInit {
-  readonly mockColumns = mockColumns;
-
   @Input() set form(form: FormGroup | null) {
     this.data$.next({ form });
   }
 
   @Input() row: Row | null = null;
+  @Input() columns: ReadonlyArray<GridColumn> | null = null;
 
   readonly data$ = new BehaviorSubject<{ form: FormGroup | null }>({
     form: null,
@@ -49,14 +47,14 @@ export class RowEditFormComponent implements OnInit {
     const result = form.getRawValue();
     console.log(result);
 
-    const rrr = this.mockColumns.filter(isExplicitCol).reduce((acc, col) => {
+    const rrr = this.columns?.filter(isExplicitCol).reduce((acc, col) => {
       return {
         ...acc,
         [col.alias]: col,
       };
     }, {});
 
-    this.mockColumns.filter(isAttributedCol).map((col) => {
+    this.columns?.filter(isAttributedCol).map((col) => {
       // FIXME - IO-TS
       // https://github.com/gcanti/io-ts/blob/master/index.md#the-idea
       // const newValue = result[col.alias];

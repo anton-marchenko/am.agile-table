@@ -141,7 +141,7 @@ export class AttributeConfiguratorComponent implements OnInit {
       accum,
     );
 
-    // FIXME - fix warning related to form debounceTime(300)
+    // FIXME - fix warning related to (probably) form debounceTime(300)
     setTimeout(() => {
       this.columnsChange.emit({ columns });
     }, 0);

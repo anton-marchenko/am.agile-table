@@ -68,16 +68,19 @@ export class AppComponent implements OnInit {
   }
 
   onColumnsChange({ columns }: ColumnsChangeEvent) {
-    this.columns$.next({ kind: 'ok', data: columns })
+    this.columns$.next({ kind: 'ok', data: columns });
   }
 
   private createForm(row: Row, columns: ReadonlyArray<GridColumn>) {
-    const cfg = columns.reduce((acc, col) => {
-      return {
-        ...acc,
-        [col.alias]: new FormControl(col.resolveFormValue(row)),
-      };
-    }, {});
+    const cfg = columns.reduce(
+      (acc, col) => {
+        return {
+          ...acc,
+          [col.alias]: new FormControl(col.resolveFormValue(row)),
+        };
+      },
+      { rowId: new FormControl(row.rowId) },
+    );
 
     return new FormGroup(cfg);
   }

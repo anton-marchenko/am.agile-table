@@ -141,7 +141,10 @@ export class AttributeConfiguratorComponent implements OnInit {
       accum,
     );
 
-    this.columnsChange.emit({ columns });
+    // FIXME - fix warning related to form debounceTime(300)
+    setTimeout(() => {
+      this.columnsChange.emit({ columns });
+    }, 0);
   }
 
   canRemove(col: AttrColumn) {

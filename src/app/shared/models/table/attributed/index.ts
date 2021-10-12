@@ -7,7 +7,10 @@ export {
   AttributedCells,
 } from '@shared/models/table/attributed/cell';
 export { TypedColumn } from '@shared/models/table/attributed/column';
-export { PredefinedAttr } from '@shared/models/table/attributed/predefined-attr';
+export {
+  PredefinedAttr,
+  isPredefinedAttr,
+} from '@shared/models/table/attributed/predefined-attr';
 export { resAttrSortField } from '@shared/models/table/attributed/sort.utils';
 
 export type AttrColumn = TextColumn | DateColumn | MultiListColumn;

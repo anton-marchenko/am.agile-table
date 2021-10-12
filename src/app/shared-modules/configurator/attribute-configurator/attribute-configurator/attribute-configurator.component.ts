@@ -12,6 +12,8 @@ import {
   GridColumn,
   createTextColumn,
   createDateColumn,
+  AttrColumn,
+  isPredefinedAttr,
 } from '@shared/models/table';
 import { BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -111,7 +113,7 @@ export class AttributeConfiguratorComponent implements OnInit {
   }
 
   onValueChanges({ data }: Out, oldColumns: ReadonlyArray<GridColumn>) {
-    const acc1: ReadonlyArray<GridColumn> = [];
+    const accum: ReadonlyArray<GridColumn> = [];
 
     const columns: ReadonlyArray<GridColumn> = oldColumns.reduce(
       (acc, curr) => {
@@ -120,10 +122,30 @@ export class AttributeConfiguratorComponent implements OnInit {
 
         return [...acc, current];
       },
-      acc1,
+      accum,
     );
 
     this.columnsChange.emit({ columns });
+  }
+
+  onRemoveColumn(
+    { alias }: { alias: string },
+    oldColumns: ReadonlyArray<GridColumn>,
+  ) {
+    const accum: ReadonlyArray<GridColumn> = [];
+
+    const columns: ReadonlyArray<GridColumn> = oldColumns.reduce(
+      (acc, curr) => {
+        return curr.alias === alias ? [...acc] : [...acc, curr];
+      },
+      accum,
+    );
+
+    this.columnsChange.emit({ columns });
+  }
+
+  canRemove(col: AttrColumn) {
+    return !isPredefinedAttr(col.attributeId);
   }
 
   // TODO: Move it to service

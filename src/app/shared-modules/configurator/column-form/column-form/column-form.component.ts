@@ -30,6 +30,7 @@ type ColumnChangeEvent = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ColumnFormComponent implements OnInit, OnDestroy {
+  @Input() canRemove = false;
   @Input() set column(column: GridColumn | null) {
     this.form.patchValue({
       alias: column?.alias,
@@ -40,6 +41,7 @@ export class ColumnFormComponent implements OnInit, OnDestroy {
   }
 
   @Output() valueChanges = new EventEmitter<ColumnChangeEvent>();
+  @Output() removeColumn = new EventEmitter<{ alias: string }>();
 
   readonly form = new FormGroup({
     alias: new FormControl(null),
@@ -61,5 +63,12 @@ export class ColumnFormComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.ngUnsubscribe$.next();
     this.ngUnsubscribe$.complete();
+  }
+
+  onRemove() {
+    // FIXME IO-TS
+    const alias = this.form.controls.alias.value;
+
+    this.removeColumn.emit({ alias });
   }
 }

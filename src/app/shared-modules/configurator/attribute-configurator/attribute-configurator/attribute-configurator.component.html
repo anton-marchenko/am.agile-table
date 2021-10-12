@@ -19,17 +19,28 @@
   <ng-container *ngIf="columnsState.kind === 'ok'">
     <div>
       <span style="margin-right: 4px">Create column:</span>
-      <button (click)="onAddTextColumn(columnsState.data)" style="margin-right: 4px">
+      <button
+        (click)="onAddTextColumn(columnsState.data)"
+        style="margin-right: 4px"
+      >
         Text
       </button>
       <button (click)="onAddDateColumn(columnsState.data)">Date</button>
     </div>
     <ng-container *ngFor="let col of columnsState.data">
       <ng-container *ngIf="col.kind === 'explicit'">
-        <am-column-form [column]="col" (valueChanges)="onValueChanges($event, columnsState.data)"></am-column-form>
+        <am-column-form
+          [column]="col"
+          (valueChanges)="onValueChanges($event, columnsState.data)"
+        ></am-column-form>
       </ng-container>
       <ng-container *ngIf="col.kind === 'attributed'">
-        <am-column-form [column]="col" (valueChanges)="onValueChanges($event, columnsState.data)"></am-column-form>
+        <am-column-form
+          [column]="col"
+          [canRemove]="canRemove(col)"
+          (removeColumn)="onRemoveColumn($event, columnsState.data)"
+          (valueChanges)="onValueChanges($event, columnsState.data)"
+        ></am-column-form>
       </ng-container>
     </ng-container>
   </ng-container>

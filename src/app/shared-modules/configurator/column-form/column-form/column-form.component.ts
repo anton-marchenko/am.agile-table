@@ -8,20 +8,17 @@ import {
   EventEmitter,
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { Nullish } from '@shared/models/nullish';
+import { EditColHandler } from '@shared/models/edit-col-handler';
+import { ProcessingState, ProcessSubj } from '@shared/models/processing-state';
 import { GridColumn } from '@shared/models/table';
-import { Subject } from 'rxjs';
-import { debounceTime, takeUntil } from 'rxjs/operators';
+import { unwrapNullable } from '@shared/utils/unwrap-nullable';
+import { BehaviorSubject, Subject } from 'rxjs';
 
-type ColumnChangeEvent = {
-  // sender: ColumnFormComponent;
-  data: {
-    alias: Nullish<string>;
-    title: Nullish<string>;
-    width: Nullish<number>;
-    sortable: Nullish<boolean>;
-  };
+type EditColData = {
+  data: EditColHandler;
 };
+
+type Proc = { processing$: ProcessSubj };
 
 @Component({
   selector: 'am-column-form',
@@ -30,45 +27,66 @@ type ColumnChangeEvent = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ColumnFormComponent implements OnInit, OnDestroy {
-  @Input() canRemove = false;
+  @Input() set canRemove(canRemove: boolean) {
+    this.canRemove$.next(canRemove);
+  }
+
   @Input() set column(column: GridColumn | null) {
+    // this.form.disable();
     this.form.patchValue({
       alias: column?.alias,
-      title: column?.name,
+      name: column?.name,
       width: column?.width,
       sortable: column?.sortable,
     });
   }
 
-  @Output() valueChanges = new EventEmitter<ColumnChangeEvent>();
-  @Output() removeColumn = new EventEmitter<{ alias: string }>();
+  @Output() removeColumn = new EventEmitter<Proc>();
+  @Output() editColumn = new EventEmitter<Proc & EditColData>();
 
   readonly form = new FormGroup({
     alias: new FormControl(null),
-    title: new FormControl(null),
+    name: new FormControl(null),
     width: new FormControl(null),
     sortable: new FormControl(null),
   });
+
+  readonly canRemove$ = new BehaviorSubject<boolean>(false);
+  readonly deletingState$ = new BehaviorSubject<ProcessingState>(null);
+  readonly savingState$ = new BehaviorSubject<ProcessingState>(null);
 
   private readonly ngUnsubscribe$ = new Subject();
 
   constructor() {}
 
-  ngOnInit(): void {
-    this.form.valueChanges
-      .pipe(debounceTime(300), takeUntil(this.ngUnsubscribe$))
-      .subscribe((data) => this.valueChanges.emit({ data }));
-  }
+  ngOnInit(): void {}
 
   ngOnDestroy() {
     this.ngUnsubscribe$.next();
     this.ngUnsubscribe$.complete();
   }
 
-  onRemove() {
-    // FIXME IO-TS
-    const alias = this.form.controls.alias.value;
+  onRemove(event: Event) {
+    event.preventDefault();
 
-    this.removeColumn.emit({ alias });
+    this.removeColumn.emit({ processing$: this.deletingState$ });
+  }
+
+  onSubmit() {
+    const fields = ['name', 'width', 'sortable'] as const;
+    const value = this.form.getRawValue();
+    const data: EditColHandler = {
+      alias: unwrapNullable(value.alias),
+      body: fields.reduce((acc, curr) => {
+        return value[curr] === undefined
+          ? { ...acc }
+          : { ...acc, [curr]: value[curr] };
+      }, {} as const),
+    };
+
+    this.editColumn.emit({
+      processing$: this.savingState$,
+      data,
+    });
   }
 }

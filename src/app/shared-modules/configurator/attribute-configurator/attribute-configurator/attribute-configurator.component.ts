@@ -6,39 +6,17 @@ import {
   Output,
   EventEmitter,
 } from '@angular/core';
-import { Nullish } from '@shared/models/nullish';
+import { EditColHandler } from '@shared/models/edit-col-handler';
+import { ProcessingState, ProcessSubj } from '@shared/models/processing-state';
 import { ResponseState } from '@shared/models/response-state';
 import {
   GridColumn,
-  createTextColumn,
-  createDateColumn,
   AttrColumn,
   isPredefinedAttr,
+  NewAttrColumn,
 } from '@shared/models/table';
 import { BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
-
-type ColChangeEvent = {
-  columns: ReadonlyArray<GridColumn>;
-};
-
-// FIXME Duplicate with ColumnFormComponent
-type Out = {
-  // sender: ColumnFormComponent;
-  data: {
-    alias: Nullish<string>;
-    title: Nullish<string>;
-    width: Nullish<number>;
-    sortable: Nullish<boolean>;
-  };
-};
-type Out2 = Pick<GridColumn, 'width' | 'name' | 'sortable'>;
-
-const normalizeOut = (data: Out['data']): Out2 => ({
-  name: data.title || '',
-  width: data.width,
-  sortable: data.sortable,
-});
 
 type State<T> = ResponseState<ReadonlyArray<T>> | null;
 type ColState = State<GridColumn>;
@@ -75,6 +53,15 @@ const resStateWithWarn =
     return state;
   };
 
+/** duplicate with col-form */
+type Proc = { processing$: ProcessSubj };
+type CreateCol = Proc & { column: NewAttrColumn };
+type RemoveCol = Proc & { attributeId: number };
+
+type EditColData = {
+  data: EditColHandler;
+};
+
 @Component({
   selector: 'am-attribute-configurator',
   templateUrl: './attribute-configurator.component.html',
@@ -86,7 +73,11 @@ export class AttributeConfiguratorComponent implements OnInit {
     this._columnsState$.next(state);
   }
 
-  @Output() columnsChange = new EventEmitter<ColChangeEvent>();
+  @Output() createColumn = new EventEmitter<CreateCol>();
+  @Output() removeColumn = new EventEmitter<RemoveCol>();
+  @Output() editColumn = new EventEmitter<Proc & EditColData>();
+
+  readonly creatingState$ = new BehaviorSubject<ProcessingState>(null);
 
   private readonly _columnsState$ = new BehaviorSubject<ColState>({
     kind: 'ok',
@@ -100,65 +91,44 @@ export class AttributeConfiguratorComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  onAddTextColumn(oldColumns: ReadonlyArray<GridColumn>) {
-    this.columnsChange.emit({
-      columns: this.createColumn(createTextColumn, oldColumns),
-    });
-  }
-
-  onAddDateColumn(oldColumns: ReadonlyArray<GridColumn>) {
-    this.columnsChange.emit({
-      columns: this.createColumn(createDateColumn, oldColumns),
-    });
-  }
-
-  onValueChanges({ data }: Out, oldColumns: ReadonlyArray<GridColumn>) {
-    const accum: ReadonlyArray<GridColumn> = [];
-
-    const columns: ReadonlyArray<GridColumn> = oldColumns.reduce(
-      (acc, curr) => {
-        const current =
-          curr.alias === data.alias ? { ...curr, ...normalizeOut(data) } : curr;
-
-        return [...acc, current];
+  onAddTextColumn() {
+    this.createColumn.emit({
+      processing$: this.creatingState$,
+      column: {
+        name: 'New Column',
+        cellType: 'text',
+        kind: 'attributed',
       },
-      accum,
-    );
+    });
+  }
 
-    this.columnsChange.emit({ columns });
+  onAddDateColumn() {
+    this.createColumn.emit({
+      processing$: this.creatingState$,
+      column: {
+        name: 'New Date Column',
+        cellType: 'date',
+        kind: 'attributed',
+      },
+    });
+  }
+
+  onEditColumn(event: { processing$: ProcessSubj; data: EditColHandler }) {
+    this.editColumn.emit(event);
   }
 
   onRemoveColumn(
-    { alias }: { alias: string },
-    oldColumns: ReadonlyArray<GridColumn>,
+    {
+      processing$,
+    }: {
+      processing$: ProcessSubj;
+    },
+    attributeId: number,
   ) {
-    const accum: ReadonlyArray<GridColumn> = [];
-
-    const columns: ReadonlyArray<GridColumn> = oldColumns.reduce(
-      (acc, curr) => {
-        return curr.alias === alias ? [...acc] : [...acc, curr];
-      },
-      accum,
-    );
-
-    // FIXME - fix warning related to (probably) form debounceTime(300)
-    setTimeout(() => {
-      this.columnsChange.emit({ columns });
-    }, 0);
+    this.removeColumn.emit({ attributeId, processing$ });
   }
 
   canRemove(col: AttrColumn) {
     return !isPredefinedAttr(col.attributeId);
-  }
-
-  // TODO: Move it to service
-  private createColumn(
-    createFn: (id: number) => GridColumn,
-    oldColumns: ReadonlyArray<GridColumn>,
-  ) {
-    const newCol: GridColumn = createFn(new Date().getTime());
-    const columns = [...oldColumns, newCol];
-
-    return columns;
   }
 }

@@ -1,16 +1,13 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { GridColumn } from '@shared/models/table';
+import { GridColumn, NewAttrColumn } from '@shared/models/table';
 import { ResponseState } from '@shared/models/response-state';
 import { Row } from '@shared/models/table';
-import { BehaviorSubject, of } from 'rxjs';
-import { delay, take, tap } from 'rxjs/operators';
+import { BehaviorSubject } from 'rxjs';
 import { FakeBackendService } from '@core/http/fake-backend/fake-backend.service';
-
-// FIXME duplicate
-type ColumnsChangeEvent = {
-  columns: ReadonlyArray<GridColumn>;
-};
+import { ProcessSubj } from '@shared/models/processing-state';
+import { responseStateToProc } from '@shared/utils/processing-state.utils';
+import { EditColHandler } from '@shared/models/edit-col-handler';
 
 // FIXME duplicate
 type State<T> = ResponseState<ReadonlyArray<T>> | null;
@@ -49,28 +46,6 @@ export class AppComponent implements OnInit {
       (res) => this.rows$.next(res),
       (err) => this.rows$.next({ kind: 'error', error: 'Oooops' }),
     );
-
-    // of(mockColumns)
-    //   .pipe(
-    //     tap(() => this.columns$.next({ kind: 'loading' })),
-    //     delay(500),
-    //     take(1),
-    //   )
-    //   .subscribe(
-    //     (res) => this.columns$.next({ kind: 'ok', data: res }),
-    //     (err) => this.columns$.next({ kind: 'error', error: 'Oooops' }),
-    //   );
-
-    // of(rows)
-    //   .pipe(
-    //     tap(() => this.rows$.next({ kind: 'loading' })),
-    //     delay(900),
-    //     take(1),
-    //   )
-    //   .subscribe(
-    //     (res) => this.rows$.next({ kind: 'ok', data: res }),
-    //     (err) => this.rows$.next({ kind: 'error', error: 'Oooops' }),
-    //   );
   }
 
   // TODO - how to refactor?
@@ -80,8 +55,52 @@ export class AppComponent implements OnInit {
     this.columns = event.columns;
   }
 
-  onColumnsChange({ columns }: ColumnsChangeEvent) {
-    this.columns$.next({ kind: 'ok', data: columns });
+  onCreateColumn({
+    column,
+    processing$,
+  }: {
+    column: NewAttrColumn;
+    processing$: ProcessSubj;
+  }) {
+    this.fakeBackend.createColumn(column).subscribe((state) => {
+      processing$.next(responseStateToProc(state));
+
+      if (state.kind === 'ok') {
+        this.columns$.next(state);
+      }
+    });
+  }
+
+  onEditColumn({
+    processing$,
+    data,
+  }: {
+    processing$: ProcessSubj;
+    data: EditColHandler;
+  }) {
+    this.fakeBackend.editColumn(data).subscribe((state) => {
+      processing$.next(responseStateToProc(state));
+
+      if (state.kind === 'ok') {
+        this.columns$.next(state);
+      }
+    });
+  }
+
+  onRemoveColumn({
+    attributeId,
+    processing$,
+  }: {
+    attributeId: number;
+    processing$: ProcessSubj;
+  }) {
+    this.fakeBackend.removeColumn(attributeId).subscribe((state) => {
+      processing$.next(responseStateToProc(state));
+
+      if (state.kind === 'ok') {
+        this.columns$.next(state);
+      }
+    });
   }
 
   private createForm(row: Row, columns: ReadonlyArray<GridColumn>) {

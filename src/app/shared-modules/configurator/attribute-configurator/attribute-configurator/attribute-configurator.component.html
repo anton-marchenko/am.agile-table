@@ -20,26 +20,43 @@
     <div>
       <span style="margin-right: 4px">Create column:</span>
       <button
-        (click)="onAddTextColumn(columnsState.data)"
+        (click)="onAddTextColumn()"
         style="margin-right: 4px"
+        [disabled]="(creatingState$ | async) === 'processing'"
       >
         Text
       </button>
-      <button (click)="onAddDateColumn(columnsState.data)">Date</button>
+      <button
+        (click)="onAddDateColumn()"
+        [disabled]="(creatingState$ | async) === 'processing'"
+      >
+        Date
+      </button>
+      <span
+        *ngIf="(creatingState$ | async) === 'processing'"
+        class="processing-box"
+        >Creating...</span
+      >
+    </div>
+    <div
+      *ngIf="(creatingState$ | async) === 'reject'"
+      class="processing-err-box"
+    >
+      An error occured. Try again.
     </div>
     <ng-container *ngFor="let col of columnsState.data">
       <ng-container *ngIf="col.kind === 'explicit'">
         <am-column-form
           [column]="col"
-          (valueChanges)="onValueChanges($event, columnsState.data)"
+          (editColumn)="onEditColumn($event)"
         ></am-column-form>
       </ng-container>
       <ng-container *ngIf="col.kind === 'attributed'">
         <am-column-form
           [column]="col"
           [canRemove]="canRemove(col)"
-          (removeColumn)="onRemoveColumn($event, columnsState.data)"
-          (valueChanges)="onValueChanges($event, columnsState.data)"
+          (editColumn)="onEditColumn($event)"
+          (removeColumn)="onRemoveColumn($event, col.attributeId)"
         ></am-column-form>
       </ng-container>
     </ng-container>

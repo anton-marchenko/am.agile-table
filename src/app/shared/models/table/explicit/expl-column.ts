@@ -1,15 +1,30 @@
 import { ExplicitCells } from '@shared/models/table/explicit/expl-cell';
 import { FormValue } from '@shared/models/table/common/form-value.type';
 import { ColumnDictionary } from '@shared/models/table/common/column-dictionary';
+import { ColumnCfg } from '@shared/models/table/common/column';
 
-type TypedExplCol<A extends keyof ExplicitCells> = {
-  readonly name: string;
+type ExplicitKind = {
   readonly kind: 'explicit';
-  readonly alias: A;
 };
 
-export type ExplColumn =
-  | (TypedExplCol<'author'> &
-      FormValue<string | null> &
-      ColumnDictionary<string>)
-  | (TypedExplCol<'rating'> & FormValue<number | null>);
+type Alias<T> = {
+  readonly alias: T;
+};
+
+type TypedExplCol<A extends keyof ExplicitCells> = ColumnCfg &
+  ExplicitKind &
+  Alias<A>;
+
+export type TypedExplColDS<A extends keyof ExplicitCells> = ColumnCfg &
+  ExplicitKind &
+  Alias<A>;
+
+type Author = TypedExplCol<'author'> &
+  FormValue<string | null> &
+  ColumnDictionary<string>;
+
+type Raiting = TypedExplCol<'rating'> & FormValue<number | null>;
+
+export type ExplColumn = Author | Raiting;
+
+export type ExplColumnDS = TypedExplColDS<'author'> | TypedExplColDS<'rating'>;

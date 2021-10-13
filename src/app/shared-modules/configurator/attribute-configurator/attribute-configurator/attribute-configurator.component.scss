@@ -1,3 +1,14 @@
 :host {
   display: block;
 }
+
+.processing-box {
+  margin-left: 8px;
+  font-size: 12px;
+}
+
+.processing-err-box {
+  font-size: 12px;
+  color: rgb(184, 35, 35);
+  padding: 2px 0;
+}

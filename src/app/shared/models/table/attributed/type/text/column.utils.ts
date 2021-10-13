@@ -1,18 +1,28 @@
 import { GridColumn } from '@shared/models/table';
+import { TextColumnDS } from '@shared/models/table/attributed/type/text/column';
 import { formTextValueFn } from '@shared/models/table/attributed/type/text/form.utils';
 import { getTextRequests } from '@shared/models/table/attributed/type/text/http.utils';
 import { SortFn } from '@shared/models/table/common/sort-column.type';
 
 export const sortAttrText: SortFn = (field, dir) => `${field}/Value ${dir}`;
 
-export const createTextColumn = (attributeId: number): GridColumn => ({
-  kind: 'attributed',
+/** FIXME - duplicate with DATE */
+export const resolveTextColumnDS = (column: TextColumnDS): TextColumnDS =>
+  ({
+    name: column.name,
+    cellType: column.cellType,
+    kind: column.kind,
+    attributeId: column.attributeId,
+    sortable: column.sortable,
+    width: column.width,
+  } as const);
+
+export const resolveTextColumn = (ds: TextColumnDS): GridColumn => ({
+  ...ds,
   cellType: 'text',
-  attributeId,
-  alias: 'text' + attributeId,
-  name: 'New Column',
-  sortable: true,
+  kind: 'attributed',
+  alias: 'text' + ds.attributeId,
   sortFn: sortAttrText,
-  resolveFormValue: formTextValueFn(attributeId),
-  makeRequest: getTextRequests(attributeId),
+  resolveFormValue: formTextValueFn(ds.attributeId),
+  makeRequest: getTextRequests(ds.attributeId),
 });

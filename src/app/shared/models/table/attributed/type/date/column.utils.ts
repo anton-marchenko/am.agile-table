@@ -3,17 +3,26 @@ import {
   formDateValueFn,
   getDateRequests,
 } from '@shared/models/table/attributed/type/date';
+import { DateColumnDS } from '@shared/models/table/attributed/type/date/column';
 
 export const sortAttrDate: SortFn = (field, dir) => `${field}/Value ${dir}`;
 
-export const createDateColumn = (attributeId: number): GridColumn => ({
-  kind: 'attributed',
+/** FIXME - duplicate with Text */
+export const resolveDateColumnDS = (column: DateColumnDS): DateColumnDS => ({
+  name: column.name,
+  cellType: column.cellType,
+  kind: column.kind,
+  attributeId: column.attributeId,
+  sortable: column.sortable,
+  width: column.width,
+} as const);
+
+export const resolveDateColumn = (ds: DateColumnDS): GridColumn => ({
+  ...ds,
   cellType: 'date',
-  attributeId,
-  alias: 'text' + attributeId,
-  name: 'Date Column',
-  sortable: true,
+  kind: 'attributed',
+  alias: 'date' + ds.attributeId,
   sortFn: sortAttrDate,
-  resolveFormValue: formDateValueFn(attributeId),
-  makeRequest: getDateRequests(attributeId),
+  resolveFormValue: formDateValueFn(ds.attributeId),
+  makeRequest: getDateRequests(ds.attributeId),
 });

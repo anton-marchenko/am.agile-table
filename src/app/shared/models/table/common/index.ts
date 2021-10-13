@@ -2,7 +2,7 @@ export {
   isAttributedCol,
   isExplicitCol,
 } from '@shared/models/table/common/column.utils';
-export { GridColumn } from '@shared/models/table/common/column';
+export { GridColumn, GridColumnDS } from '@shared/models/table/common/column';
 export { Row } from '@shared/models/table/common/row';
 export {
   SortDirection,

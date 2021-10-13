@@ -11,6 +11,8 @@
   <am-attribute-configurator
     class="right-side__inner"
     [columnsState]="columns$ | async"
-    (columnsChange)="onColumnsChange($event)"
+    (editColumn)="onEditColumn($event)"
+    (createColumn)="onCreateColumn($event)"
+    (removeColumn)="onRemoveColumn($event)"
   ></am-attribute-configurator>
 </div>

@@ -5,7 +5,12 @@
     (editRow)="onEditRow($event)"
   ></am-common-table>
 
-  <am-row-edit-form [form]="form" [row]="row" [columns]="columns"></am-row-edit-form>
+  <am-row-edit-form *ngIf="showEditForm$ | async"
+    [row]="row"
+    [columnsState]="columns$ | async"
+    (close)="onCloseForm()"
+    (save)="onSaveForm($event)"
+  ></am-row-edit-form>
 </div>
 <div class="right-side">
   <am-attribute-configurator

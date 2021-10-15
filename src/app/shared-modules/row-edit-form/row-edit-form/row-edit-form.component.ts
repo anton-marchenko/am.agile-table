@@ -3,12 +3,130 @@ import {
   OnInit,
   ChangeDetectionStrategy,
   Input,
+  Output,
+  EventEmitter,
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { GridColumn, isAttributedCol, isExplicitCol } from '@shared/models/table';
+import { ResponseState } from '@shared/models/response-state';
+import { GridColumn } from '@shared/models/table';
 import { Row } from '@shared/models/table';
+import { RowDTO } from '@shared/models/table/common/row-dto';
 import { unwrapNullable } from '@shared/utils/unwrap-nullable';
 import { BehaviorSubject } from 'rxjs';
+import { map } from 'rxjs/operators';
+
+// FIXME duplicate
+type State<T> = ResponseState<ReadonlyArray<T>> | null;
+
+type StateWithWarn<T> =
+  | { readonly kind: 'warning'; readonly message: string }
+  | { readonly kind: 'ok'; readonly data: ReadonlyArray<T> };
+
+// FIXME - duplicate with src\app\shared-modules\common-table\common-table\common-table.component.ts
+const resStateWithWarn =
+  (noDataMsg: string = 'No data') =>
+  <T>(state: State<T>): StateWithWarn<T> => {
+    const getMsg = (message: string): StateWithWarn<T> => ({
+      kind: 'warning',
+      message,
+    });
+
+    if (!state) {
+      return getMsg(noDataMsg);
+    }
+
+    if (state.kind === 'error') {
+      return getMsg('Error');
+    }
+
+    if (state.kind === 'loading') {
+      return getMsg('Loading...');
+    }
+
+    if (state.kind === 'ok' && state.data.length === 0) {
+      return getMsg(noDataMsg);
+    }
+
+    return state;
+  };
+
+const createForm = (row: Row, columns: ReadonlyArray<GridColumn>) => {
+  const acc: {
+    rowId: FormControl;
+    explicit: { [key: string]: FormControl };
+    attributed: {
+      text: { [key: string]: FormControl };
+      date: { [key: string]: FormControl };
+      multiList: { [key: string]: FormControl };
+    };
+  } = {
+    rowId: new FormControl(row.rowId),
+    explicit: {},
+    attributed: { text: {}, date: {}, multiList: {} },
+  } as const;
+  const cfg = columns.reduce((acc, col) => {
+    if (col.kind === 'explicit') {
+      return {
+        ...acc,
+        explicit: {
+          ...acc.explicit,
+          [col.alias]: new FormControl(col.resolveFormValue(row)),
+        },
+      };
+    } else {
+      switch (col.cellType) {
+        case 'text': {
+          return {
+            ...acc,
+            attributed: {
+              ...acc.attributed,
+              text: {
+                ...acc.attributed.text,
+                [col.attributeId]: new FormControl(col.resolveFormValue(row)),
+              },
+            },
+          };
+        }
+        case 'date': {
+          return {
+            ...acc,
+            attributed: {
+              ...acc.attributed,
+              date: {
+                ...acc.attributed.date,
+                [col.attributeId]: new FormControl(col.resolveFormValue(row)),
+              },
+            },
+          };
+        }
+        case 'multiList': {
+          return {
+            ...acc,
+            attributed: {
+              ...acc.attributed,
+              multiList: {
+                ...acc.attributed.multiList,
+                [col.attributeId]: new FormControl(col.resolveFormValue(row)),
+              },
+            },
+          };
+        }
+      }
+    }
+  }, acc);
+
+  const form = new FormGroup({
+    rowId: new FormControl(row.rowId),
+    explicit: new FormGroup(cfg.explicit),
+    attributed: new FormGroup({
+      text: new FormGroup(cfg.attributed.text),
+      date: new FormGroup(cfg.attributed.date),
+      multiList: new FormGroup(cfg.attributed.multiList),
+    }),
+  });
+
+  return form;
+};
 
 @Component({
   selector: 'am-row-edit-form',
@@ -17,21 +135,61 @@ import { BehaviorSubject } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RowEditFormComponent implements OnInit {
-  @Input() set form(form: FormGroup | null) {
-    this.data$.next({ form });
+  @Input() set columnsState(state: State<GridColumn>) {
+    this._columnsState$.next(state);
+
+    if (state?.kind === 'ok') {
+      const row = this.row$.getValue();
+
+      if (row) {
+        this.updateForm(row, state.data);
+      } else {
+        this.data$.next({ form: null });
+      }
+    } else {
+      this.data$.next({ form: null });
+    }
   }
 
-  @Input() row: Row | null = null;
-  @Input() columns: ReadonlyArray<GridColumn> | null = null;
+  @Input() set row(row: Row | null) {
+    this.row$.next(row);
+
+    const state = this._columnsState$.getValue();
+
+    if (state?.kind === 'ok') {
+      const row = this.row$.getValue();
+
+      if (row) {
+        this.updateForm(row, state.data);
+      } else {
+        this.data$.next({ form: null });
+      }
+    } else {
+      this.data$.next({ form: null });
+    }
+  }
 
   readonly data$ = new BehaviorSubject<{ form: FormGroup | null }>({
     form: null,
   });
 
+  private readonly row$ = new BehaviorSubject<Row | null>(null);
+
+  private readonly _columnsState$ = new BehaviorSubject<State<GridColumn>>({
+    kind: 'ok',
+    data: [],
+  });
+  readonly columnsState$ = this._columnsState$
+    .asObservable()
+    .pipe(map(resStateWithWarn('No columns data')));
+
+  @Output() close = new EventEmitter<void>();
+  @Output() save = new EventEmitter<{ row: RowDTO }>();
+
   constructor() {}
 
   ngOnInit(): void {
-    console.log(this.form);
+    // console.log(this.form);
   }
 
   getControl(form: FormGroup, fieldName: string) {
@@ -40,27 +198,27 @@ export class RowEditFormComponent implements OnInit {
     return unwrapNullable(form.get(fieldName)) as FormControl;
   }
 
+  onClose() {
+    this.close.emit();
+  }
+
   onSave(form: FormGroup) {
     // TODO ################################
     // some validators in particular status
     // some - in all status (picture size)
-    const result = form.getRawValue();
-    console.log(result);
+    // IO-TS
+    const rowData: RowDTO = form.value;
 
-    const rrr = this.columns?.filter(isExplicitCol).reduce((acc, col) => {
-      return {
-        ...acc,
-        [col.alias]: col,
-      };
-    }, {});
+    const colS = this._columnsState$.getValue();
 
-    this.columns?.filter(isAttributedCol).map((col) => {
-      // FIXME - IO-TS
-      // https://github.com/gcanti/io-ts/blob/master/index.md#the-idea
-      // const newValue = result[col.alias];
-      const newValue = result[col.alias];
+    if (colS?.kind === 'ok') {
+      this.save.emit({ row: rowData });
+    }
+  }
 
-      console.log(col.makeRequest(unwrapNullable(this.row), newValue));
-    });
+  private updateForm(row: Row, columns: ReadonlyArray<GridColumn>) {
+    const form = createForm(row, columns);
+
+    this.data$.next({ form });
   }
 }

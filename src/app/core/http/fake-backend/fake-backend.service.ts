@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ColumnAdapterService } from '@core/http/column-adapter/column-adapter.service';
 import { mockColumnsDB } from '@core/mock/columns';
-import { rows } from '@core/mock/rows';
 import { EditColHandler } from '@shared/models/edit-col-handler';
 import { ResponseState } from '@shared/models/response-state';
 import {
@@ -30,14 +29,9 @@ const withLoading = <T>(req: Observable<T>) => {
   providedIn: 'root',
 })
 export class FakeBackendService {
-  private rows = rows;
   private columnsDB = mockColumnsDB;
 
   constructor(private readonly columnAdapter: ColumnAdapterService) {}
-
-  getRows() {
-    return of(this.rows).pipe(delay(800));
-  }
 
   getColumns() {
     return of(this.columns).pipe(delay(500));
@@ -45,10 +39,6 @@ export class FakeBackendService {
 
   getColumnsW(): Observable<State<GridColumn>> {
     return withLoading(this.getColumns());
-  }
-
-  getRowsW(): Observable<State<Row>> {
-    return withLoading(this.getRows());
   }
 
   /** It would be http post/patch request in a real app */

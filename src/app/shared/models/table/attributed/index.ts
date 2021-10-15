@@ -1,6 +1,5 @@
 import { DateColumn } from '@shared/models/table/attributed/type/date';
 import { MultiListColumn } from '@shared/models/table/attributed/type/multi-list/column';
-import { TextColumn } from '@shared/models/table/attributed/type/text/column';
 
 import {
   DateColumnDS,
@@ -8,6 +7,7 @@ import {
 } from '@shared/models/table/attributed/type/date/column';
 import { MultiListColumnDS } from '@shared/models/table/attributed/type/multi-list/column';
 import {
+  TextColumn,
   NewTextColumnDS,
   TextColumnDS,
 } from '@shared/models/table/attributed/type/text/column';

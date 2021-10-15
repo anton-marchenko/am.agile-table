@@ -75,7 +75,7 @@
         <ng-container *ngIf="rowsState.kind === 'ok'">
           <tr *ngFor="let row of rowsState.data">
             <td class="action-col">
-              <button (click)="onEditRow(row, columnsState.data)">Edit</button>
+              <button (click)="onEditRow(row)">Edit</button>
             </td>
             <ng-container *ngFor="let col of columnsState.data">
               <td

@@ -1,29 +1,22 @@
-import { Row } from '@shared/models/table';
+import { RowDS } from '@shared/models/table/common/row';
 
-// export const rows: ReadonlyArray<Row> = [];
-export const rows: ReadonlyArray<Row> = [
+export const mockRowsDB: ReadonlyArray<RowDS> = [
   {
     rowId: 1,
     explicit: {
-      rating: 1,
+      rating: 4,
       author: { id: '1x', name: 'Ant' },
     },
     attributed: {
-      text: {
-        '1': { value: { id: 100, value: 'joe', etag: 'etagXXX' } },
-        '2': { value: { id: 101, value: 'pass', etag: 'etagXXX' } },
-      },
-      date: {
-        '3': { value: { id: 200, value: new Date(), etag: 'etagXXX' } },
-      },
-      multiList: {
-        '4': {
-          value: [
-            { id: 200, listItemId: 1, etag: 'etagXXX' },
-            { id: 200, listItemId: 2, etag: 'etagXXX' },
-          ],
-        },
-      },
+      text: [
+        { id: 100, attributeId: 1, value: 'joe', etag: 'etagXXX' },
+        { id: 101, attributeId: 2, value: 'pass', etag: 'etagXXX' },
+      ],
+      date: [{ id: 200, attributeId: 3, value: '2021-10-16T21:56:38', etag: 'etagXXX' }],
+      multiList: [
+        { id: 200, attributeId: 4, listItemId: 1, etag: 'etagXXX' },
+        { id: 200, attributeId: 4, listItemId: 2, etag: 'etagXXX' },
+      ],
     },
   },
   {
@@ -33,14 +26,12 @@ export const rows: ReadonlyArray<Row> = [
       author: { id: '2x', name: 'Lex' },
     },
     attributed: {
-      text: {
-        '1': { value: { id: 110, value: 'joe22', etag: 'etagXXX' } },
-        '2': { value: { id: 111, value: 'pass2', etag: 'etagXXX' } },
-      },
-      date: {
-        '3': { value: { id: 210, value: new Date(), etag: 'etagXXX' } },
-      },
-      multiList: {},
+      text: [
+        { id: 100, attributeId: 1, value: 'joe2', etag: 'etagXXX' },
+        { id: 101, attributeId: 2, value: 'pass3', etag: 'etagXXX' },
+      ],
+      date: [{ id: 200, attributeId: 3, value: '2021-10-10T00:00:00', etag: 'etagXXX' }],
+      multiList: [{ id: 200, attributeId: 4, listItemId: 1, etag: 'etagXXX' }],
     },
   },
 ];

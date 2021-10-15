@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { attrDictionaries, users$ } from '@core/mock/dictionaries';
 import { Dictionary } from '@shared/models/dictionary';
 import { ResponseState } from '@shared/models/response-state';
 import {
@@ -22,39 +23,6 @@ import {
   resolveExplColDS,
   resolveExplColRaiting,
 } from '@shared/models/table/explicit/expl-column.utils';
-import { concat, Observable, of } from 'rxjs';
-import { delay } from 'rxjs/operators';
-
-const q1: Observable<ResponseState<Dictionary<number>>> = of({
-  kind: 'loading',
-});
-const q2: Observable<ResponseState<Dictionary<number>>> = of({
-  kind: 'ok',
-  data: [
-    { id: 1, name: 'tag1' },
-    { id: 2, name: 'tag2' },
-    { id: 3, name: 'tag3' },
-    { id: 4, name: 'tag4' },
-  ],
-} as ResponseState<Dictionary<number>>).pipe(delay(1_000));
-
-const tags$: Observable<ResponseState<Dictionary<number>>> = concat(q1, q2);
-
-const dictionaries = [tags$, tags$, tags$] as const;
-
-const u1: Observable<ResponseState<Dictionary<string>>> = of({
-  kind: 'loading',
-});
-const u2: Observable<ResponseState<Dictionary<string>>> = of({
-  kind: 'ok',
-  data: [
-    { id: '1x', name: 'Ant' },
-    { id: '2x', name: 'Lex' },
-    { id: '3x', name: 'User3' },
-  ],
-} as ResponseState<Dictionary<string>>).pipe(delay(1_000));
-
-const users$: Observable<ResponseState<Dictionary<string>>> = concat(u1, u2);
 
 @Injectable({
   providedIn: 'root',
@@ -70,7 +38,7 @@ export class ColumnAdapterService {
         case 'date':
           return resolveDateColumn(ds);
         case 'multiList': {
-          const dict = dictionaries[ds.listId];
+          const dict = attrDictionaries[ds.listId];
 
           return resolveMultiListColumn(dict)(ds);
         }
@@ -86,6 +54,20 @@ export class ColumnAdapterService {
     }
   }
 
+  /**
+   * TODO - refactor
+   * use col structure:
+   * {
+   *  data: {
+   *    alias,
+   *    width,
+   *    ...
+   *  },
+   *  makeRequest: fn,
+   *  resolver1: fn1,
+   *  resolver2: fn2,
+   * }
+   */
   resolveColumnDS(column: GridColumnDS): GridColumnDS {
     if (column.kind === 'attributed') {
       switch (column.cellType) {

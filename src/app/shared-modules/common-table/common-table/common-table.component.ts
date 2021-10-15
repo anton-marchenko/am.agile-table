@@ -99,10 +99,7 @@ export class CommonTableComponent implements OnInit {
   readonly getMultiListValue = getMultiListValue;
   readonly resAttrSortField = resAttrSortField;
 
-  @Output() editRow = new EventEmitter<{
-    row: Row;
-    columns: ReadonlyArray<GridColumn>;
-  }>();
+  @Output() editRow = new EventEmitter<{ row: Row }>();
 
   constructor() {}
 
@@ -129,8 +126,8 @@ export class CommonTableComponent implements OnInit {
     );
   }
 
-  onEditRow(row: Row, columns: ReadonlyArray<GridColumn>) {
-    this.editRow.emit({ row, columns });
+  onEditRow(row: Row) {
+    this.editRow.emit({ row });
   }
 
   editCell(col: GridColumn, row: Row) {

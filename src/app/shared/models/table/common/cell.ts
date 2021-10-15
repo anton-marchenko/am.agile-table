@@ -5,5 +5,5 @@ export interface Cell<T> {
 }
 
 export type Cells<T> = {
-  readonly [key: string]: T | undefined;
+  readonly [key: number]: T | undefined;
 };

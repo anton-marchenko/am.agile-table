@@ -8,6 +8,8 @@ import { FakeBackendService } from '@core/http/fake-backend/fake-backend.service
 import { ProcessSubj } from '@shared/models/processing-state';
 import { responseStateToProc } from '@shared/utils/processing-state.utils';
 import { EditColHandler } from '@shared/models/edit-col-handler';
+import { RowDTO } from '@shared/models/table/common/row-dto';
+import { RowBackendService } from '@core/http/fake-backend/row-backend.service';
 
 // FIXME duplicate
 type State<T> = ResponseState<ReadonlyArray<T>> | null;
@@ -19,6 +21,7 @@ type State<T> = ResponseState<ReadonlyArray<T>> | null;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent implements OnInit {
+  readonly showEditForm$ = new BehaviorSubject<boolean>(false);
   readonly columns$ = new BehaviorSubject<State<GridColumn>>({
     kind: 'ok',
     data: [],
@@ -30,11 +33,12 @@ export class AppComponent implements OnInit {
   });
 
   title = 'agile-table';
-  form: FormGroup | null = null;
   row: Row | null = null;
-  columns: ReadonlyArray<GridColumn> | null = null;
 
-  constructor(private readonly fakeBackend: FakeBackendService) {}
+  constructor(
+    private readonly fakeBackend: FakeBackendService,
+    private readonly rowBackend: RowBackendService,
+  ) {}
 
   ngOnInit() {
     this.fakeBackend.getColumnsW().subscribe(
@@ -42,17 +46,21 @@ export class AppComponent implements OnInit {
       (err) => this.columns$.next({ kind: 'error', error: 'Oooops' }),
     );
 
-    this.fakeBackend.getRowsW().subscribe(
+    this.rowBackend.getRows().subscribe(
       (res) => this.rows$.next(res),
       (err) => this.rows$.next({ kind: 'error', error: 'Oooops' }),
     );
   }
 
+  onCloseForm() {
+    this.showEditForm$.next(false);
+  }
+
   // TODO - how to refactor?
-  onEditRow(event: { row: Row; columns: ReadonlyArray<GridColumn> }) {
-    this.form = this.createForm(event.row, event.columns);
+  onEditRow(event: { row: Row }) {
     this.row = event.row;
-    this.columns = event.columns;
+
+    this.showEditForm$.next(true);
   }
 
   onCreateColumn({
@@ -103,17 +111,13 @@ export class AppComponent implements OnInit {
     });
   }
 
-  private createForm(row: Row, columns: ReadonlyArray<GridColumn>) {
-    const cfg = columns.reduce(
-      (acc, col) => {
-        return {
-          ...acc,
-          [col.alias]: new FormControl(col.resolveFormValue(row)),
-        };
-      },
-      { rowId: new FormControl(row.rowId) },
-    );
-
-    return new FormGroup(cfg);
+  onSaveForm({ row }: { row: RowDTO }) {
+    if (row.rowId === null) {
+      this.rowBackend.createRow(row);
+      // new
+    } else {
+      // updadte
+      this.rowBackend.updateRow(row);
+    }
   }
 }

@@ -18,6 +18,7 @@ import {
 import { BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+/** FIXME duplicate */
 type State<T> = ResponseState<ReadonlyArray<T>> | null;
 type ColState = State<GridColumn>;
 

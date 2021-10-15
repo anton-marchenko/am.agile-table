@@ -7,23 +7,19 @@ type ExplicitKind = {
   readonly kind: 'explicit';
 };
 
-type Alias<T> = {
+type ExplicitAlias<T> = {
   readonly alias: T;
 };
 
-type TypedExplCol<A extends keyof ExplicitCells> = ColumnCfg &
+export type TypedExplColDS<A extends keyof ExplicitCells> = ExplicitAlias<A> &
   ExplicitKind &
-  Alias<A>;
+  ColumnCfg;
 
-export type TypedExplColDS<A extends keyof ExplicitCells> = ColumnCfg &
-  ExplicitKind &
-  Alias<A>;
-
-type Author = TypedExplCol<'author'> &
+type Author = TypedExplColDS<'author'> &
   FormValue<string | null> &
   ColumnDictionary<string>;
 
-type Raiting = TypedExplCol<'rating'> & FormValue<number | null>;
+type Raiting = TypedExplColDS<'rating'> & FormValue<number | null>;
 
 export type ExplColumn = Author | Raiting;
 

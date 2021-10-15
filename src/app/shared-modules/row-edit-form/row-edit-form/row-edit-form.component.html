@@ -1,36 +1,73 @@
-<ng-container *ngIf="data$ | async as data">
-  <div *ngIf="data.form" class="form-box">
-    <div *ngFor="let col of columns" style="margin-bottom: 10px">
-      <div style="margin-bottom: 2px; font-weight: bold">{{ col.name }}</div>
-      <div *ngIf="col.kind === 'explicit'">
-        <ng-container *ngIf="col.alias === 'author'">
-          <am-list-control
-            [dictionary]="col.dictionary$ | async"
-            [formControl]="getControl(data.form, col.alias)"
-          ></am-list-control>
-        </ng-container>
-        <ng-container *ngIf="col.alias === 'rating'">
-          <input type="text" [formControl]="getControl(data.form, col.alias)" />
-        </ng-container>
-      </div>
-      <div *ngIf="col.kind === 'attributed'">
-        <div *ngIf="col.cellType === 'text'">
-          <input type="text" [formControl]="getControl(data.form, col.alias)" />
-        </div>
-        <div *ngIf="col.cellType === 'date'">
-          <am-date-control
-            [formControl]="getControl(data.form, col.alias)"
-          ></am-date-control>
-        </div>
-        <div *ngIf="col.cellType === 'multiList'">
-          <am-list-control
-            [multiple]="true"
-            [dictionary]="col.dictionary$ | async"
-            [formControl]="getControl(data.form, col.alias)"
-          ></am-list-control>
-        </div>
-      </div>
-    </div>
-    <button (click)="onSave(data.form)">Save</button>
+<ng-template #noDataTpl> NO DATA </ng-template>
+<ng-template #colsMsgTpl let-text="text">
+  <div class="msg">
+    {{ text || "---" }}
   </div>
-</ng-container>
+</ng-template>
+
+<div class="form-box">
+  <ng-container *ngIf="columnsState$ | async as columnsState; else noDataTpl">
+    <ng-container *ngIf="columnsState.kind === 'warning'">
+      <ng-container
+        *ngTemplateOutlet="
+          colsMsgTpl;
+          context: {
+            text: columnsState.message
+          }
+        "
+      ></ng-container>
+    </ng-container>
+    <ng-container *ngIf="columnsState.kind === 'ok'">
+      <ng-container *ngIf="data$ | async as data">
+        <ng-container *ngIf="data.form">
+          <div
+            *ngFor="let col of columnsState.data"
+            style="margin-bottom: 10px"
+          >
+            <div style="margin-bottom: 2px; font-weight: bold">
+              {{ col.name }}
+            </div>
+            <div *ngIf="col.kind === 'explicit'">
+              <ng-container *ngIf="col.alias === 'author'">
+                <am-list-control
+                  [dictionary]="col.dictionary$ | async"
+                  [formControl]="getControl(data.form, 'explicit.author')"
+                ></am-list-control>
+              </ng-container>
+              <ng-container *ngIf="col.alias === 'rating'">
+                <input
+                  type="number"
+                  [formControl]="getControl(data.form, 'explicit.rating')"
+                />
+              </ng-container>
+            </div>
+            <div *ngIf="col.kind === 'attributed'">
+              <div *ngIf="col.cellType === 'text'">
+                <input
+                  type="text"
+                  [formControl]="getControl(data.form, 'attributed.text.' + col.attributeId)"
+                />
+              </div>
+              <div *ngIf="col.cellType === 'date'">
+                <am-date-control
+                  [formControl]="getControl(data.form, 'attributed.date.' + col.attributeId)"
+                ></am-date-control>
+              </div>
+              <div *ngIf="col.cellType === 'multiList'">
+                <am-list-control
+                  [multiple]="true"
+                  [dictionary]="col.dictionary$ | async"
+                  [formControl]="getControl(data.form, 'attributed.multiList.' + col.attributeId)"
+                ></am-list-control>
+              </div>
+            </div>
+          </div>
+          <div>
+            <button (click)="onSave(data.form)" class="save-btn">Save</button>
+            <button (click)="onClose()">Close</button>
+          </div>
+        </ng-container>
+      </ng-container>
+    </ng-container>
+  </ng-container>
+</div>

@@ -6,6 +6,9 @@
 </ng-template>
 
 <div class="form-box">
+  <div class="processing-box" *ngIf="(savingState$ | async) === 'processing'">
+    Saving...
+  </div>
   <ng-container *ngIf="columnsState$ | async as columnsState; else noDataTpl">
     <ng-container *ngIf="columnsState.kind === 'warning'">
       <ng-container
@@ -19,6 +22,7 @@
     </ng-container>
     <ng-container *ngIf="columnsState.kind === 'ok'">
       <ng-container *ngIf="data$ | async as data">
+        <ng-container *ngIf="!data.form">No data</ng-container>
         <ng-container *ngIf="data.form">
           <div
             *ngFor="let col of columnsState.data"
@@ -45,25 +49,38 @@
               <div *ngIf="col.cellType === 'text'">
                 <input
                   type="text"
-                  [formControl]="getControl(data.form, 'attributed.text.' + col.attributeId)"
+                  [formControl]="
+                    getControl(data.form, 'attributed.text.' + col.attributeId)
+                  "
                 />
               </div>
               <div *ngIf="col.cellType === 'date'">
                 <am-date-control
-                  [formControl]="getControl(data.form, 'attributed.date.' + col.attributeId)"
+                  [formControl]="
+                    getControl(data.form, 'attributed.date.' + col.attributeId)
+                  "
                 ></am-date-control>
               </div>
               <div *ngIf="col.cellType === 'multiList'">
                 <am-list-control
                   [multiple]="true"
                   [dictionary]="col.dictionary$ | async"
-                  [formControl]="getControl(data.form, 'attributed.multiList.' + col.attributeId)"
+                  [formControl]="
+                    getControl(
+                      data.form,
+                      'attributed.multiList.' + col.attributeId
+                    )
+                  "
                 ></am-list-control>
               </div>
             </div>
           </div>
           <div>
-            <button (click)="onSave(data.form)" class="save-btn">Save</button>
+            <button (click)="onSave(data.form)" class="save-btn">
+              {{
+                (savingState$ | async) === "processing" ? "Saving..." : "Save"
+              }}
+            </button>
             <button (click)="onClose()">Close</button>
           </div>
         </ng-container>

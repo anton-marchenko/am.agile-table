@@ -9,6 +9,7 @@
     <td [attr.colspan]="columns || 1">{{ text || "---" }}</td>
   </tr>
 </ng-template>
+<ng-template #emptyCellTpl>---</ng-template>
 
 <ng-container *ngIf="columnsState$ | async as columnsState; else noDataTpl">
   <ng-container *ngIf="columnsState.kind === 'warning'">
@@ -84,10 +85,10 @@
               >
                 <ng-container [ngSwitch]="col.alias">
                   <ng-container *ngSwitchCase="'author'">
-                    {{ row.explicit.author?.name }}
+                    {{ row.explicit.author?.name ?? "---" }}
                   </ng-container>
                   <ng-container *ngSwitchCase="'rating'">
-                    {{ row.explicit.rating }}
+                    {{ row.explicit.rating ?? "---" }}
                   </ng-container>
                   <ng-container *ngSwitchDefault> --- </ng-container>
                 </ng-container>
@@ -101,16 +102,21 @@
                     >
                       <ng-container *ngSwitchCase="PredefinedAttr.Name">
                         <span style="color: green">
-                          {{ getTextValue(row, col.attributeId)?.value }}
+                          {{
+                            getTextValue(row, col.attributeId)?.value ?? "---"
+                          }}
                         </span>
                       </ng-container>
                       <ng-container *ngSwitchDefault>
-                        {{ getTextValue(row, col.attributeId)?.value }}
+                        {{ getTextValue(row, col.attributeId)?.value ?? "---" }}
                       </ng-container>
                     </ng-container>
                   </ng-container>
                   <ng-container *ngIf="col.cellType === 'date'">
-                    {{ getDateValue(row, col.attributeId)?.value | date }}
+                    {{
+                      (getDateValue(row, col.attributeId)?.value | date) ??
+                        "---"
+                    }}
                   </ng-container>
                   <ng-container *ngIf="col.cellType === 'multiList'">
                     <ng-container *ngIf="col.dictionary$ | async as dictState">
@@ -122,18 +128,24 @@
                       </ng-container>
                       <ng-container *ngIf="dictState.kind === 'ok'">
                         <ng-container
-                          *ngFor="
-                            let item of getMultiListValue(row, col.attributeId)
+                          *ngIf="
+                            getMultiListValue(
+                              row,
+                              col.attributeId
+                            ) as listItems;
+                            else emptyCellTpl
                           "
                         >
-                          <div>
-                            {{
-                              resolveDictionary(
-                                dictState.data,
-                                item?.listItemId
-                              )?.name
-                            }}
-                          </div>
+                          <ng-container *ngFor="let item of listItems">
+                            <div>
+                              {{
+                                resolveDictionary(
+                                  dictState.data,
+                                  item?.listItemId
+                                )?.name
+                              }}
+                            </div>
+                          </ng-container>
                         </ng-container>
                       </ng-container>
                     </ng-container>

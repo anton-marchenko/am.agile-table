@@ -52,7 +52,7 @@ export class AppComponent implements OnInit {
     );
   }
 
-  onCloseForm() {
+  onCloseRowForm() {
     this.showEditForm$.next(false);
   }
 
@@ -60,6 +60,10 @@ export class AppComponent implements OnInit {
   onEditRow(event: { row: Row }) {
     this.row = event.row;
 
+    this.showEditForm$.next(true);
+  }
+
+  onCreateNewRow() {
     this.showEditForm$.next(true);
   }
 
@@ -111,13 +115,19 @@ export class AppComponent implements OnInit {
     });
   }
 
-  onSaveForm({ row }: { row: RowDTO }) {
+  onSaveRow({ row, processing$ }: { row: RowDTO; processing$: ProcessSubj }) {
     if (row.rowId === null) {
-      this.rowBackend.createRow(row);
-      // new
+      this.rowBackend.createRow(row).subscribe((state) => {
+        processing$.next(responseStateToProc(state));
+
+        console.log(state);
+
+        if (state.kind === 'ok') {
+          this.rows$.next(state);
+        }
+      });
     } else {
-      // updadte
-      this.rowBackend.updateRow(row);
+      this.rowBackend.updateRow(row.rowId, row);
     }
   }
 }

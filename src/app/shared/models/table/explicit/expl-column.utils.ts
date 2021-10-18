@@ -14,7 +14,7 @@ export const resolveExplColAuthor =
     kind: 'explicit',
     alias: 'author',
     sortFn: sortAuthor,
-    resolveFormValue: (r: Row) => r.explicit.author.id || null,
+    resolveFormValue: (r: Row) => r.explicit.author?.id ?? null,
     dictionary$,
   });
 
@@ -25,7 +25,7 @@ export const resolveExplColRaiting = (
   kind: 'explicit',
   alias: 'rating',
   sortFn: sortId,
-  resolveFormValue: (r: Row) => r.explicit.rating || null,
+  resolveFormValue: (r: Row) => r.explicit.rating ?? null,
 });
 
 export const resolveExplColDS = (column: ExplColumnDS): ExplColumnDS => ({

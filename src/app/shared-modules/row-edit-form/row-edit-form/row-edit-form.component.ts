@@ -7,6 +7,7 @@ import {
   EventEmitter,
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import { ProcessingState, ProcessSubj } from '@shared/models/processing-state';
 import { ResponseState } from '@shared/models/response-state';
 import { GridColumn } from '@shared/models/table';
 import { Row } from '@shared/models/table';
@@ -50,17 +51,15 @@ const resStateWithWarn =
     return state;
   };
 
-const createForm = (row: Row, columns: ReadonlyArray<GridColumn>) => {
+const createForm = (row: Row | null, columns: ReadonlyArray<GridColumn>) => {
   const acc: {
-    rowId: FormControl;
     explicit: { [key: string]: FormControl };
     attributed: {
-      text: { [key: string]: FormControl };
-      date: { [key: string]: FormControl };
-      multiList: { [key: string]: FormControl };
+      text: { [key: number]: FormControl };
+      date: { [key: number]: FormControl };
+      multiList: { [key: number]: FormControl };
     };
   } = {
-    rowId: new FormControl(row.rowId),
     explicit: {},
     attributed: { text: {}, date: {}, multiList: {} },
   } as const;
@@ -70,7 +69,7 @@ const createForm = (row: Row, columns: ReadonlyArray<GridColumn>) => {
         ...acc,
         explicit: {
           ...acc.explicit,
-          [col.alias]: new FormControl(col.resolveFormValue(row)),
+          [col.alias]: new FormControl(row ? col.resolveFormValue(row) : null),
         },
       };
     } else {
@@ -82,7 +81,9 @@ const createForm = (row: Row, columns: ReadonlyArray<GridColumn>) => {
               ...acc.attributed,
               text: {
                 ...acc.attributed.text,
-                [col.attributeId]: new FormControl(col.resolveFormValue(row)),
+                [col.attributeId]: new FormControl(
+                  row ? col.resolveFormValue(row) : null,
+                ),
               },
             },
           };
@@ -94,7 +95,9 @@ const createForm = (row: Row, columns: ReadonlyArray<GridColumn>) => {
               ...acc.attributed,
               date: {
                 ...acc.attributed.date,
-                [col.attributeId]: new FormControl(col.resolveFormValue(row)),
+                [col.attributeId]: new FormControl(
+                  row ? col.resolveFormValue(row) : null,
+                ),
               },
             },
           };
@@ -106,7 +109,9 @@ const createForm = (row: Row, columns: ReadonlyArray<GridColumn>) => {
               ...acc.attributed,
               multiList: {
                 ...acc.attributed.multiList,
-                [col.attributeId]: new FormControl(col.resolveFormValue(row)),
+                [col.attributeId]: new FormControl(
+                  row ? col.resolveFormValue(row) : null,
+                ),
               },
             },
           };
@@ -116,7 +121,7 @@ const createForm = (row: Row, columns: ReadonlyArray<GridColumn>) => {
   }, acc);
 
   const form = new FormGroup({
-    rowId: new FormControl(row.rowId),
+    rowId: new FormControl(row?.rowId ?? null),
     explicit: new FormGroup(cfg.explicit),
     attributed: new FormGroup({
       text: new FormGroup(cfg.attributed.text),
@@ -135,17 +140,13 @@ const createForm = (row: Row, columns: ReadonlyArray<GridColumn>) => {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RowEditFormComponent implements OnInit {
-  @Input() set columnsState(state: State<GridColumn>) {
-    this._columnsState$.next(state);
+  @Input() set columnsState(colState: State<GridColumn>) {
+    this._columnsState$.next(colState);
 
-    if (state?.kind === 'ok') {
+    if (colState?.kind === 'ok') {
       const row = this.row$.getValue();
 
-      if (row) {
-        this.updateForm(row, state.data);
-      } else {
-        this.data$.next({ form: null });
-      }
+      this.updateForm(row, colState.data);
     } else {
       this.data$.next({ form: null });
     }
@@ -154,16 +155,12 @@ export class RowEditFormComponent implements OnInit {
   @Input() set row(row: Row | null) {
     this.row$.next(row);
 
-    const state = this._columnsState$.getValue();
+    const colState = this._columnsState$.getValue();
 
-    if (state?.kind === 'ok') {
+    if (colState?.kind === 'ok') {
       const row = this.row$.getValue();
 
-      if (row) {
-        this.updateForm(row, state.data);
-      } else {
-        this.data$.next({ form: null });
-      }
+      this.updateForm(row, colState.data);
     } else {
       this.data$.next({ form: null });
     }
@@ -183,8 +180,13 @@ export class RowEditFormComponent implements OnInit {
     .asObservable()
     .pipe(map(resStateWithWarn('No columns data')));
 
+  readonly savingState$ = new BehaviorSubject<ProcessingState>(null);
+
   @Output() close = new EventEmitter<void>();
-  @Output() save = new EventEmitter<{ row: RowDTO }>();
+  @Output() save = new EventEmitter<{
+    row: RowDTO;
+    processing$: ProcessSubj;
+  }>();
 
   constructor() {}
 
@@ -203,6 +205,7 @@ export class RowEditFormComponent implements OnInit {
   }
 
   onSave(form: FormGroup) {
+    console.log(form);
     // TODO ################################
     // some validators in particular status
     // some - in all status (picture size)
@@ -212,11 +215,11 @@ export class RowEditFormComponent implements OnInit {
     const colS = this._columnsState$.getValue();
 
     if (colS?.kind === 'ok') {
-      this.save.emit({ row: rowData });
+      this.save.emit({ row: rowData, processing$: this.savingState$ });
     }
   }
 
-  private updateForm(row: Row, columns: ReadonlyArray<GridColumn>) {
+  private updateForm(row: Row | null, columns: ReadonlyArray<GridColumn>) {
     const form = createForm(row, columns);
 
     this.data$.next({ form });

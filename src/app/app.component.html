@@ -5,11 +5,18 @@
     (editRow)="onEditRow($event)"
   ></am-common-table>
 
-  <am-row-edit-form *ngIf="showEditForm$ | async"
+  <div class="create-btn-box">
+    <button [disabled]="showEditForm$ | async" (click)="onCreateNewRow()">
+      Create row
+    </button>
+  </div>
+
+  <am-row-edit-form
+    *ngIf="showEditForm$ | async"
     [row]="row"
     [columnsState]="columns$ | async"
-    (close)="onCloseForm()"
-    (save)="onSaveForm($event)"
+    (close)="onCloseRowForm()"
+    (save)="onSaveRow($event)"
   ></am-row-edit-form>
 </div>
 <div class="right-side">

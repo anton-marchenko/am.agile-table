@@ -1,4 +1,6 @@
+import { DictionaryItem } from '@shared/models/dictionary';
+
 export type ExplicitCells = {
-  readonly rating: number;
-  readonly author: { readonly id: string; readonly name: string };
+  readonly rating: number | null;
+  readonly author: DictionaryItem<string> | null;
 };

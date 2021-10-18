@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { RowAdapterService } from '@core/http/row-adapter/row-adapter.service';
 import { mockRowsDB } from '@core/mock/rows';
 import { ResponseState } from '@shared/models/response-state';
+import { RowDS } from '@shared/models/table/common/row';
 import { RowDTO } from '@shared/models/table/common/row-dto';
 import { concat, Observable, of } from 'rxjs';
 import { catchError, delay, map } from 'rxjs/operators';
@@ -24,10 +25,12 @@ const withLoading = <T>(req: Observable<T>) => {
   providedIn: 'root',
 })
 export class RowBackendService {
+  private rows = mockRowsDB;
+
   constructor(private readonly rowAdapter: RowAdapterService) {}
 
   getRows() {
-    const rows = mockRowsDB.map((rowDS) => this.rowAdapter.resolveRow(rowDS));
+    const rows = this.rows.map((rowDS) => this.rowAdapter.resolveRow(rowDS));
 
     const rows$ = of(rows).pipe(delay(800));
 
@@ -35,11 +38,31 @@ export class RowBackendService {
   }
 
   createRow(row: RowDTO) {
-    console.log(row);
+    const rowId = new Date().getTime();
+    const rowData = this.rowAdapter.resolveNewRow(row);
+
+    const newRow: RowDS = {
+      rowId,
+      explicit: {
+        rating: rowData.explicit.rating,
+        author: null,
+      },
+      attributed: {
+        text: [],
+        date: [],
+        multiList: [],
+      },
+    };
+
+    this.rows = [...this.rows, newRow];
+
+    const req = of(this.rows.map((rowDS) => this.rowAdapter.resolveRow(rowDS))).pipe(delay(500));
+
+    return withLoading(req);
   }
 
-  updateRow(row: RowDTO) {
-    const newRow = this.rowAdapter.resolveNewRow(row);
-    console.log(newRow);
+  updateRow(rowId: number, row: RowDTO) {
+    // const newRow = this.rowAdapter.resolveRow(row);
+    console.log('row: RowDTO', row);
   }
 }

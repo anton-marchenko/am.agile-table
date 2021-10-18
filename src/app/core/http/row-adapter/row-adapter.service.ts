@@ -34,7 +34,9 @@ export class RowAdapterService {
         date: rowDS.attributed.date.reduce((acc, curr) => {
           return {
             ...acc,
-            [curr.attributeId]: { value: { ...curr, value: new Date(curr.value) } },
+            [curr.attributeId]: {
+              value: { ...curr, value: new Date(curr.value) },
+            },
           };
         }, dtAcc),
         multiList: rowDS.attributed.multiList.reduce((acc, curr) => {
@@ -65,10 +67,11 @@ export class RowAdapterService {
         date: resolveSingleValue(row.attributed.date),
         multiList: Object.entries(row.attributed.multiList).reduce(
           (acc, [attributeId, values]) => {
-            const listItems = values.map((listItemId) => ({
-              attributeId,
-              listItemId,
-            }));
+            const listItems =
+              values?.map((listItemId) => ({
+                attributeId,
+                listItemId,
+              })) ?? [];
             return [...acc, ...listItems];
           },
           mlAcc,

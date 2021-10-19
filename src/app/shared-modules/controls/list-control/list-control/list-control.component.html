@@ -1,9 +1,4 @@
 <ng-template #noDataTpl> No data </ng-template>
-<ng-template #selectContent let-dataItem>
-  <ng-container *ngFor="let item of dataItem">
-    <option [value]="item.id">{{ item.name }}</option>
-  </ng-container>
-</ng-template>
 
 <ng-container *ngIf="dictionary; else noDataTpl">
   <ng-container *ngIf="dictionary.kind === 'error'">
@@ -23,16 +18,15 @@
     <select
       *ngIf="multiple"
       class="select"
-      multiple="true"
+      multiple
       [ngModel]="selectedItems"
       (ngModelChange)="changeValue($event)"
     >
-      <ng-container
-        *ngTemplateOutlet="
-          selectContent;
-          context: { $implicit: dictionary.data }
-        "
-      ></ng-container>
+      <!-- DO NOT move it to ng-template!
+      Than dictionary [1, 2] becomes ['1', '2'] in Form value -->
+      <ng-container *ngFor="let item of dictionary.data">
+        <option [value]="item.id">{{ item.name }}</option>
+      </ng-container>
     </select>
     <select
       *ngIf="!multiple"
@@ -40,12 +34,9 @@
       [ngModel]="selectedItems"
       (ngModelChange)="changeValue($event)"
     >
-      <ng-container
-        *ngTemplateOutlet="
-          selectContent;
-          context: { $implicit: dictionary.data }
-        "
-      ></ng-container>
+      <ng-container *ngFor="let item of dictionary.data">
+        <option [value]="item.id">{{ item.name }}</option>
+      </ng-container>
     </select>
   </ng-container>
 </ng-container>

@@ -31,5 +31,5 @@ const createDateString = (date: Date) => {
 export const formDateValueFn = (attributeId: number) => (row: Row) => {
   const dateValue = getDateValue(unwrapNullable(row), attributeId);
 
-  return dateValue ? createDateString(unwrapNullable(dateValue.value)) : null;
+  return dateValue?.value ? createDateString(unwrapNullable(dateValue.value)) : null;
 };

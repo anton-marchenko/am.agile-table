@@ -54,6 +54,7 @@ export class AppComponent implements OnInit {
 
   onCloseRowForm() {
     this.showEditForm$.next(false);
+    this.row = null;
   }
 
   // TODO - how to refactor?

@@ -1,4 +1,9 @@
 <ng-template #noDataTpl> No data </ng-template>
+<ng-template #selectContent let-dataItem>
+  <ng-container *ngFor="let item of dataItem">
+    <option [value]="item.id">{{ item.name }}</option>
+  </ng-container>
+</ng-template>
 
 <ng-container *ngIf="dictionary; else noDataTpl">
   <ng-container *ngIf="dictionary.kind === 'error'">
@@ -12,15 +17,35 @@
     </select>
   </ng-container>
   <ng-container *ngIf="dictionary.kind === 'ok'">
+    <!-- Workaround because of framework limitation ([multiple]="multiple")
+    @link https://github.com/angular/angular/pull/38719
+    -->
     <select
+      *ngIf="multiple"
       class="select"
-      [multiple]="multiple"
+      multiple="true"
       [ngModel]="selectedItems"
       (ngModelChange)="changeValue($event)"
     >
-      <ng-container *ngFor="let item of dictionary.data">
-        <option [value]="item.id">{{ item.name }}</option>
-      </ng-container>
+      <ng-container
+        *ngTemplateOutlet="
+          selectContent;
+          context: { $implicit: dictionary.data }
+        "
+      ></ng-container>
+    </select>
+    <select
+      *ngIf="!multiple"
+      class="select"
+      [ngModel]="selectedItems"
+      (ngModelChange)="changeValue($event)"
+    >
+      <ng-container
+        *ngTemplateOutlet="
+          selectContent;
+          context: { $implicit: dictionary.data }
+        "
+      ></ng-container>
     </select>
   </ng-container>
 </ng-container>

@@ -3,6 +3,12 @@ import { ResponseState } from '@shared/models/response-state';
 import { concat, Observable, of } from 'rxjs';
 import { delay } from 'rxjs/operators';
 
+export const usersSync = [
+  { id: '1x', name: 'Ant' },
+  { id: '2x', name: 'Lex' },
+  { id: '3x', name: 'User3' },
+] as const;
+
 const q1: Observable<ResponseState<Dictionary<number>>> = of({
   kind: 'loading',
 });
@@ -25,11 +31,7 @@ const u1: Observable<ResponseState<Dictionary<string>>> = of({
 });
 const u2: Observable<ResponseState<Dictionary<string>>> = of({
   kind: 'ok',
-  data: [
-    { id: '1x', name: 'Ant' },
-    { id: '2x', name: 'Lex' },
-    { id: '3x', name: 'User3' },
-  ],
+  data: usersSync,
 } as ResponseState<Dictionary<string>>).pipe(delay(1_000));
 
 export const users$: Observable<ResponseState<Dictionary<string>>> = concat(

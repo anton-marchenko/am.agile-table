@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { DictionaryBackendService } from '@core/http/fake-backend/dictionary-backend.service';
 import { RowAdapterService } from '@core/http/row-adapter/row-adapter.service';
 import { mockRowsDB } from '@core/mock/rows';
 import { ResponseState } from '@shared/models/response-state';
@@ -8,6 +9,8 @@ import { concat, Observable, of } from 'rxjs';
 import { catchError, delay, map } from 'rxjs/operators';
 
 type State<T> = ResponseState<ReadonlyArray<T>> | null;
+
+const genFakeId = () => new Date().getTime();
 
 // FIXME duplicate
 const withLoading = <T>(req: Observable<T>) => {
@@ -27,7 +30,10 @@ const withLoading = <T>(req: Observable<T>) => {
 export class RowBackendService {
   private rows = mockRowsDB;
 
-  constructor(private readonly rowAdapter: RowAdapterService) {}
+  constructor(
+    private readonly rowAdapter: RowAdapterService,
+    private readonly dictionaryBackend: DictionaryBackendService,
+  ) {}
 
   getRows() {
     const rows = this.rows.map((rowDS) => this.rowAdapter.resolveRow(rowDS));
@@ -38,25 +44,41 @@ export class RowBackendService {
   }
 
   createRow(row: RowDTO) {
-    const rowId = new Date().getTime();
     const rowData = this.rowAdapter.resolveNewRow(row);
 
+    /** Let's pretend that backend makes its job here */
     const newRow: RowDS = {
-      rowId,
+      rowId: genFakeId(),
       explicit: {
         rating: rowData.explicit.rating,
-        author: null,
+        author: rowData.explicit.author
+          ? this.dictionaryBackend.getUser(rowData.explicit.author)
+          : null,
       },
       attributed: {
-        text: [],
-        date: [],
-        multiList: [],
+        text: rowData.attributed.text.map((val) => ({
+          ...val,
+          id: genFakeId(),
+          etag: 'etag',
+        })),
+        date: rowData.attributed.date.map((val) => ({
+          ...val,
+          id: genFakeId(),
+          etag: 'etag',
+        })),
+        multiList: rowData.attributed.multiList.map((val) => ({
+          ...val,
+          id: genFakeId(),
+          etag: 'etag',
+        })),
       },
     };
 
     this.rows = [...this.rows, newRow];
 
-    const req = of(this.rows.map((rowDS) => this.rowAdapter.resolveRow(rowDS))).pipe(delay(500));
+    const req = of(
+      this.rows.map((rowDS) => this.rowAdapter.resolveRow(rowDS)),
+    ).pipe(delay(500));
 
     return withLoading(req);
   }

@@ -7,7 +7,7 @@ import { RowDTO } from '@shared/models/table/common/row-dto';
 
 const resolveSingleValue = <T>(entries: { [key: number]: T }) =>
   Object.entries(entries).map(([attributeId, value]) => ({
-    attributeId,
+    attributeId: +attributeId,
     value,
   }));
 
@@ -35,7 +35,10 @@ export class RowAdapterService {
           return {
             ...acc,
             [curr.attributeId]: {
-              value: { ...curr, value: new Date(curr.value) },
+              value: {
+                ...curr,
+                value: curr.value ? new Date(curr.value) : null,
+              },
             },
           };
         }, dtAcc),
@@ -57,7 +60,7 @@ export class RowAdapterService {
 
   resolveNewRow(row: RowDTO) {
     //FIXME attr type string -> number
-    const mlAcc: ReadonlyArray<{ attributeId: string; listItemId: number }> =
+    const mlAcc: ReadonlyArray<{ attributeId: number; listItemId: number }> =
       [] as const;
 
     return {
@@ -69,7 +72,7 @@ export class RowAdapterService {
           (acc, [attributeId, values]) => {
             const listItems =
               values?.map((listItemId) => ({
-                attributeId,
+                attributeId: +attributeId,
                 listItemId,
               })) ?? [];
             return [...acc, ...listItems];

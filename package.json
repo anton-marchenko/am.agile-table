@@ -5,6 +5,8 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build:ghp": "ng build --prod --base-href \"https://anton-marchenko.github.io/am.agile-table/\"",
+    "deploy:ghp": "npx angular-cli-ghpages --dir=dist/agile-table",
     "watch": "ng build --watch --configuration development",
     "lint": "eslint \"**/*.{ts,tsx}\" ",
     "test": "ng test",

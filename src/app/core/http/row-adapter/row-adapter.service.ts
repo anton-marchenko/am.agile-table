@@ -58,7 +58,7 @@ export class RowAdapterService {
     };
   }
 
-  resolveNewRow(row: RowDTO) {
+  resolveRowData(row: RowDTO) {
     //FIXME attr type string -> number
     const mlAcc: ReadonlyArray<{ attributeId: number; listItemId: number }> =
       [] as const;
@@ -80,6 +80,6 @@ export class RowAdapterService {
           mlAcc,
         ),
       },
-    };
+    } as const;
   }
 }

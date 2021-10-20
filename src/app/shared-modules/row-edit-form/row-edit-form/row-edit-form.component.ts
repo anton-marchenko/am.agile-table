@@ -190,9 +190,7 @@ export class RowEditFormComponent implements OnInit {
 
   constructor() {}
 
-  ngOnInit(): void {
-    // console.log(this.form);
-  }
+  ngOnInit(): void {}
 
   getControl(form: FormGroup, fieldName: string) {
     // FIXME
@@ -205,7 +203,6 @@ export class RowEditFormComponent implements OnInit {
   }
 
   onSave(form: FormGroup) {
-    console.log(form);
     // TODO ################################
     // some validators in particular status
     // some - in all status (picture size)

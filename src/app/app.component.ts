@@ -117,18 +117,17 @@ export class AppComponent implements OnInit {
   }
 
   onSaveRow({ row, processing$ }: { row: RowDTO; processing$: ProcessSubj }) {
-    if (row.rowId === null) {
-      this.rowBackend.createRow(row).subscribe((state) => {
-        processing$.next(responseStateToProc(state));
+    const request$ =
+      row.rowId === null
+        ? this.rowBackend.createRow(row)
+        : this.rowBackend.updateRow(row.rowId, row);
 
-        console.log(state);
+    request$.subscribe((state) => {
+      processing$.next(responseStateToProc(state));
 
-        if (state.kind === 'ok') {
-          this.rows$.next(state);
-        }
-      });
-    } else {
-      this.rowBackend.updateRow(row.rowId, row);
-    }
+      if (state.kind === 'ok') {
+        this.rows$.next(state);
+      }
+    });
   }
 }

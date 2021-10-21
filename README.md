@@ -1,6 +1,13 @@
-# AgileTable
+# am.AgileTable
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 12.2.7.
+Angular 12 configurable table project example
+
+## Error handling
+
+The application implements [Global Error Handling](https://pkief.medium.com/global-error-handling-in-angular-ea395ce174b1) for handle all errors in a single place.
+
+Click to the column title (for columns with "sortable=true" settings) for making sorting. It will trigger an error and an error message appear.
+
 
 ## Development server
 

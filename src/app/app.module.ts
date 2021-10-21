@@ -6,11 +6,13 @@ import { RowEditFormModule } from '@shared-modules/row-edit-form/row-edit-form.m
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { CoreModule } from '@core/core.module';
 
 @NgModule({
   declarations: [AppComponent],
   imports: [
     BrowserModule,
+    CoreModule.forRoot(),
     AppRoutingModule,
     CommonTableModule,
     RowEditFormModule,

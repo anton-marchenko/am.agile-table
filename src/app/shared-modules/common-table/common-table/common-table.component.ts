@@ -100,6 +100,7 @@ export class CommonTableComponent implements OnInit {
   readonly resAttrSortField = resAttrSortField;
 
   @Output() editRow = new EventEmitter<{ row: Row }>();
+  @Output() sort = new EventEmitter<{ descriptors: ReadonlyArray<string> }>();
 
   constructor() {}
 
@@ -118,12 +119,9 @@ export class CommonTableComponent implements OnInit {
       this.sortDescriptor.delete(field);
     }
 
-    console.log(
-      '!!!sort ',
-      Array.from(this.sortDescriptor)
-        .map(([k, v]) => v)
-        .join(' AND '),
-    );
+    this.sort.emit({
+      descriptors: Array.from(this.sortDescriptor).map(([k, v]) => v),
+    });
   }
 
   onEditRow(row: Row) {

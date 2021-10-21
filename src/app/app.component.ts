@@ -36,8 +36,8 @@ export class AppComponent implements OnInit {
   row: Row | null = null;
 
   constructor(
+    public readonly rowBackend: RowBackendService,
     private readonly fakeBackend: FakeBackendService,
-    private readonly rowBackend: RowBackendService,
   ) {}
 
   ngOnInit() {

@@ -3,6 +3,7 @@
     [columnsState]="columns$ | async"
     [rowsState]="rows$ | async"
     (editRow)="onEditRow($event)"
+    (sort)="rowBackend.onSort($event)"
   ></am-common-table>
 
   <div class="create-btn-box">

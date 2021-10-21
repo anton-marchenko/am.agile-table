@@ -9,6 +9,7 @@ import { RowDTO } from '@shared/models/table/common/row-dto';
 import { unwrapNullable } from '@shared/utils/unwrap-nullable';
 import { concat, Observable, of } from 'rxjs';
 import { catchError, delay, map } from 'rxjs/operators';
+import { HttpErrorResponse } from '@angular/common/http';
 
 type State<T> = ResponseState<ReadonlyArray<T>> | null;
 
@@ -82,6 +83,17 @@ export class RowBackendService {
     const rows$ = of(rows).pipe(delay(800));
 
     return withLoading(rows$);
+  }
+
+  onSort({ descriptors }: { descriptors: ReadonlyArray<string> }) {
+    const sortQuery = descriptors.join(' AND ');
+    const url = `https://some.fake.backend?$sort=${sortQuery}`;
+
+    throw new HttpErrorResponse({
+      url,
+      status: 500,
+      statusText: `It's just sorting demo error :)`,
+    });
   }
 
   createRow(row: RowDTO) {

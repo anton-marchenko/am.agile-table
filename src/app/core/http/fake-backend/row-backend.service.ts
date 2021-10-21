@@ -1,11 +1,9 @@
 import { Injectable } from '@angular/core';
 import { DictionaryBackendService } from '@core/http/fake-backend/dictionary-backend.service';
-import { RowAdapterService } from '@core/http/row-adapter/row-adapter.service';
-import { mockRowsDB } from '@core/mock/rows';
+import { RowAdapterService } from '@core/http/fake-backend/row-adapter/row-adapter.service';
+import { mockRowsDB } from '@core/http/fake-backend/mock/rows';
 import { ResponseState } from '@shared/models/response-state';
-import { DateValDS } from '@shared/models/table/attributed/type/date/cell';
 import { MultiListValDS } from '@shared/models/table/attributed/type/multi-list/cell';
-import { TextValDS } from '@shared/models/table/attributed/type/text/cell';
 import { RowDS } from '@shared/models/table/common/row';
 import { RowDTO } from '@shared/models/table/common/row-dto';
 import { unwrapNullable } from '@shared/utils/unwrap-nullable';

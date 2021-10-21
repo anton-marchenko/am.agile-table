@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { usersSync } from '@core/mock/dictionaries';
+import { usersSync } from '@core/http/fake-backend/mock/dictionaries';
 
 @Injectable({
   providedIn: 'root'

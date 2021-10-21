@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
-import { attrDictionaries, users$ } from '@core/mock/dictionaries';
-import { Dictionary } from '@shared/models/dictionary';
-import { ResponseState } from '@shared/models/response-state';
+import { attrDictionaries, users$ } from '@core/http/fake-backend/mock/dictionaries';
 import {
   GridColumn,
   GridColumnDS,

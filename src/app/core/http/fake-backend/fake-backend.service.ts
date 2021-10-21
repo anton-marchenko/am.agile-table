@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { ColumnAdapterService } from '@core/http/column-adapter/column-adapter.service';
-import { mockColumnsDB } from '@core/mock/columns';
+import { ColumnAdapterService } from '@core/http/fake-backend/column-adapter/column-adapter.service';
+import { mockColumnsDB } from '@core/http/fake-backend/mock/columns';
 import { EditColHandler } from '@shared/models/edit-col-handler';
 import { ResponseState } from '@shared/models/response-state';
 import {

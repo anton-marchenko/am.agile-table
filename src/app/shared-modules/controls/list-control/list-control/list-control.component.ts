@@ -9,6 +9,7 @@ import {
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { Dictionary } from '@shared/models/dictionary';
 import { ResponseState } from '@shared/models/response-state';
+import { trackByFn } from '@shared/utils/track-by.utils';
 
 @Component({
   selector: 'am-list-control',
@@ -29,6 +30,8 @@ export class ListControlComponent<T> implements OnInit, ControlValueAccessor {
 
   disabled = false;
   selectedItems: unknown | null = null;
+
+  readonly trackByFn = trackByFn;
 
   private onChange = (v: unknown) => {};
   private onTouched = () => {};

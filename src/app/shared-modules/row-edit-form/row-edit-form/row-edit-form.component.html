@@ -25,7 +25,7 @@
         <ng-container *ngIf="!data.form">No data</ng-container>
         <ng-container *ngIf="data.form">
           <div
-            *ngFor="let col of columnsState.data"
+            *ngFor="let col of columnsState.data; trackBy: trackByFn"
             style="margin-bottom: 10px"
           >
             <div style="margin-bottom: 2px; font-weight: bold">

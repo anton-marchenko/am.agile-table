@@ -24,7 +24,7 @@
     >
       <!-- DO NOT move it to ng-template!
       Than dictionary [1, 2] becomes ['1', '2'] in Form value -->
-      <ng-container *ngFor="let item of dictionary.data">
+      <ng-container *ngFor="let item of dictionary.data; trackBy: trackByFn">
         <option [value]="item.id">{{ item.name }}</option>
       </ng-container>
     </select>
@@ -34,7 +34,7 @@
       [ngModel]="selectedItems"
       (ngModelChange)="changeValue($event)"
     >
-      <ng-container *ngFor="let item of dictionary.data">
+      <ng-container *ngFor="let item of dictionary.data; trackBy: trackByFn">
         <option [value]="item.id">{{ item.name }}</option>
       </ng-container>
     </select>

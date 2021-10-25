@@ -44,7 +44,7 @@
     >
       An error occured. Try again.
     </div>
-    <ng-container *ngFor="let col of columnsState.data">
+    <ng-container *ngFor="let col of columnsState.data; trackBy: trackByFn">
       <ng-container *ngIf="col.kind === 'explicit'">
         <am-column-form
           [column]="col"

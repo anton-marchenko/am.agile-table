@@ -15,6 +15,7 @@ import {
   isPredefinedAttr,
   NewAttrColumn,
 } from '@shared/models/table';
+import { trackByFn } from '@shared/utils/track-by.utils';
 import { BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -77,6 +78,8 @@ export class AttributeConfiguratorComponent implements OnInit {
   @Output() createColumn = new EventEmitter<CreateCol>();
   @Output() removeColumn = new EventEmitter<RemoveCol>();
   @Output() editColumn = new EventEmitter<Proc & EditColData>();
+
+  readonly trackByFn = trackByFn;
 
   readonly creatingState$ = new BehaviorSubject<ProcessingState>(null);
 

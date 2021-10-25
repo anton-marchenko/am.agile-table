@@ -26,7 +26,7 @@
     <table class="table">
       <tr>
         <th class="action-col">Action</th>
-        <th *ngFor="let col of columnsState.data" [attr.width]="col.width">
+        <th *ngFor="let col of columnsState.data; trackBy: trackByFn" [attr.width]="col.width">
           <ng-container *ngIf="col.kind === 'explicit'">
             <am-sort-title
               [sortable]="col.sortable"
@@ -74,11 +74,11 @@
           ></ng-container>
         </ng-container>
         <ng-container *ngIf="rowsState.kind === 'ok'">
-          <tr *ngFor="let row of rowsState.data">
+          <tr *ngFor="let row of rowsState.data; trackBy: trackByFn">
             <td class="action-col">
               <button (click)="onEditRow(row)">Edit</button>
             </td>
-            <ng-container *ngFor="let col of columnsState.data">
+            <ng-container *ngFor="let col of columnsState.data; trackBy: trackByFn">
               <td
                 *ngIf="col.kind === 'explicit'"
                 (dblclick)="editCell(col, row)"
@@ -136,7 +136,7 @@
                             else emptyCellTpl
                           "
                         >
-                          <ng-container *ngFor="let item of listItems">
+                          <ng-container *ngFor="let item of listItems; trackBy: trackByFn">
                             <div>
                               {{
                                 resolveDictionary(

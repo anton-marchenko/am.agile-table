@@ -25,6 +25,7 @@ import {
   getTextValue,
 } from '@shared/models/table';
 import { map } from 'rxjs/operators';
+import { trackByFn } from '@shared/utils/track-by.utils';
 
 type State<T> = ResponseState<ReadonlyArray<T>> | null;
 type ColState = State<GridColumn>;
@@ -98,6 +99,7 @@ export class CommonTableComponent implements OnInit {
   readonly getDateValue = getDateValue;
   readonly getMultiListValue = getMultiListValue;
   readonly resAttrSortField = resAttrSortField;
+  readonly trackByFn = trackByFn;
 
   @Output() editRow = new EventEmitter<{ row: Row }>();
   @Output() sort = new EventEmitter<{ descriptors: ReadonlyArray<string> }>();

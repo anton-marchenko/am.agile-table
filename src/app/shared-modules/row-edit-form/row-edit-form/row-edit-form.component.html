@@ -31,6 +31,10 @@
             <div style="margin-bottom: 2px; font-weight: bold">
               {{ col.name }}
             </div>
+            <!-- TODO: NEEDS refactor
+              nested forms
+              https://stackblitz.com/edit/angular-nested-forms-input-2?file=src%2Fapp%2Fapp.component.html
+            -->
             <div *ngIf="col.kind === 'explicit'">
               <ng-container *ngIf="col.alias === 'author'">
                 <am-list-control

@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { EditColHandler } from '@shared/models/edit-col-handler';
 import { ProcessingState, ProcessSubj } from '@shared/models/processing-state';
-import { ResponseState } from '@shared/models/response-state';
+import { State } from '@shared/models/response-state';
 import {
   GridColumn,
   AttrColumn,
@@ -19,8 +19,6 @@ import { trackByFn } from '@shared/utils/track-by.utils';
 import { BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-/** FIXME duplicate */
-type State<T> = ResponseState<ReadonlyArray<T>> | null;
 type ColState = State<GridColumn>;
 
 type StateWithWarn<T> =

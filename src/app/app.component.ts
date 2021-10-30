@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { GridColumn, NewAttrColumn } from '@shared/models/table';
-import { ResponseState } from '@shared/models/response-state';
+import { State } from '@shared/models/response-state';
 import { Row } from '@shared/models/table';
 import { BehaviorSubject } from 'rxjs';
 import { FakeBackendService } from '@core/http/fake-backend/fake-backend.service';
@@ -10,9 +10,6 @@ import { responseStateToProc } from '@shared/utils/processing-state.utils';
 import { EditColHandler } from '@shared/models/edit-col-handler';
 import { RowDTO } from '@shared/models/table/common/row-dto';
 import { RowBackendService } from '@core/http/fake-backend/row-backend.service';
-
-// FIXME duplicate
-type State<T> = ResponseState<ReadonlyArray<T>> | null;
 
 @Component({
   selector: 'am-root',

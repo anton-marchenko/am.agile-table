@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ProcessingState, ProcessSubj } from '@shared/models/processing-state';
-import { ResponseState } from '@shared/models/response-state';
+import { State } from '@shared/models/response-state';
 import { GridColumn } from '@shared/models/table';
 import { Row } from '@shared/models/table';
 import { RowDTO } from '@shared/models/table/common/row-dto';
@@ -16,9 +16,6 @@ import { trackByFn } from '@shared/utils/track-by.utils';
 import { unwrapNullable } from '@shared/utils/unwrap-nullable';
 import { BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
-
-// FIXME duplicate
-type State<T> = ResponseState<ReadonlyArray<T>> | null;
 
 type StateWithWarn<T> =
   | { readonly kind: 'warning'; readonly message: string }

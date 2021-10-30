@@ -10,7 +10,7 @@ import { Nullish } from '@shared/models/nullish';
 import { unwrapNullable } from '@shared/utils/unwrap-nullable';
 import { BehaviorSubject } from 'rxjs';
 
-import { ResponseState } from '@shared/models/response-state';
+import { State } from '@shared/models/response-state';
 import { Dictionary } from '@shared/models/dictionary';
 
 import {
@@ -27,7 +27,6 @@ import {
 import { map } from 'rxjs/operators';
 import { trackByFn } from '@shared/utils/track-by.utils';
 
-type State<T> = ResponseState<ReadonlyArray<T>> | null;
 type ColState = State<GridColumn>;
 type RowState = State<Row>;
 

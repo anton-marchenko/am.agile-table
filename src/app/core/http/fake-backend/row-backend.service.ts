@@ -6,23 +6,12 @@ import { MultiListValDS } from '@shared/models/table/attributed/type/multi-list/
 import { RowDS } from '@shared/models/table/common/row';
 import { RowDTO } from '@shared/models/table/common/row-dto';
 import { unwrapNullable } from '@shared/utils/unwrap-nullable';
-import { concat, Observable, of } from 'rxjs';
-import { catchError, delay, map } from 'rxjs/operators';
+import { of } from 'rxjs';
+import { delay } from 'rxjs/operators';
 import { HttpErrorResponse } from '@angular/common/http';
+import { withLoading } from '@shared/utils';
 
 const genFakeId = () => new Date().getTime();
-
-// FIXME duplicate
-const withLoading = <T>(req: Observable<T>) => {
-  const init = { kind: 'loading' } as const;
-
-  const req$ = req.pipe(
-    map((data) => ({ kind: 'ok', data } as const)),
-    catchError((err) => of({ kind: 'error' } as const)),
-  );
-
-  return concat(of(init), req$);
-};
 
 const createVal = <T>(val: T) => ({
   ...val,

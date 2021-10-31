@@ -7,21 +7,10 @@ import {
   GridColumn,
   GridColumnDS,
   NewAttrColumn,
-  Row,
 } from '@shared/models/table';
-import { concat, Observable, of, throwError } from 'rxjs';
-import { catchError, delay, map, switchMap } from 'rxjs/operators';
-
-const withLoading = <T>(req: Observable<T>) => {
-  const init = { kind: 'loading' } as const;
-
-  const req$ = req.pipe(
-    map((data) => ({ kind: 'ok', data } as const)),
-    catchError((err) => of({ kind: 'error' } as const)),
-  );
-
-  return concat(of(init), req$);
-};
+import { withLoading } from '@shared/utils';
+import { Observable, of } from 'rxjs';
+import { delay } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',

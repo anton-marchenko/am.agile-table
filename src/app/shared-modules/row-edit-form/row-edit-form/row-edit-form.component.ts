@@ -12,42 +12,11 @@ import { State } from '@shared/models/response-state';
 import { GridColumn } from '@shared/models/table';
 import { Row } from '@shared/models/table';
 import { RowDTO } from '@shared/models/table/common/row-dto';
+import { resolveStateWithWarn } from '@shared/utils';
 import { trackByFn } from '@shared/utils/track-by.utils';
 import { unwrapNullable } from '@shared/utils/unwrap-nullable';
 import { BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
-
-type StateWithWarn<T> =
-  | { readonly kind: 'warning'; readonly message: string }
-  | { readonly kind: 'ok'; readonly data: ReadonlyArray<T> };
-
-// FIXME - duplicate with src\app\shared-modules\common-table\common-table\common-table.component.ts
-const resStateWithWarn =
-  (noDataMsg: string = 'No data') =>
-  <T>(state: State<T>): StateWithWarn<T> => {
-    const getMsg = (message: string): StateWithWarn<T> => ({
-      kind: 'warning',
-      message,
-    });
-
-    if (!state) {
-      return getMsg(noDataMsg);
-    }
-
-    if (state.kind === 'error') {
-      return getMsg('Error');
-    }
-
-    if (state.kind === 'loading') {
-      return getMsg('Loading...');
-    }
-
-    if (state.kind === 'ok' && state.data.length === 0) {
-      return getMsg(noDataMsg);
-    }
-
-    return state;
-  };
 
 const createForm = (row: Row | null, columns: ReadonlyArray<GridColumn>) => {
   const acc: {
@@ -178,7 +147,7 @@ export class RowEditFormComponent implements OnInit {
   });
   readonly columnsState$ = this._columnsState$
     .asObservable()
-    .pipe(map(resStateWithWarn('No columns data')));
+    .pipe(map(resolveStateWithWarn('No columns data')));
 
   readonly savingState$ = new BehaviorSubject<ProcessingState>(null);
 

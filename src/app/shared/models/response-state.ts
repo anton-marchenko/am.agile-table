@@ -8,3 +8,7 @@ export type ResponseState<T> =
  * (naming things is too hard :( )
  */
 export type State<T> = ResponseState<ReadonlyArray<T>> | null;
+
+export type StateWithWarn<T> =
+  | { readonly kind: 'warning'; readonly message: string }
+  | { readonly kind: 'ok'; readonly data: ReadonlyArray<T> };

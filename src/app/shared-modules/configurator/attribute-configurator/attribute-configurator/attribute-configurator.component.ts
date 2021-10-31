@@ -22,7 +22,7 @@ import { map } from 'rxjs/operators';
 
 type ColState = State<GridColumn>;
 
-/** duplicate with col-form */
+/** FIXME duplicate with col-form */
 type Proc = { processing$: ProcessSubj };
 type CreateCol = Proc & { column: NewAttrColumn };
 type RemoveCol = Proc & { attributeId: number };

@@ -18,6 +18,7 @@ type EditColData = {
   data: EditColHandler;
 };
 
+/** FIXME duplicate */
 type Proc = { processing$: ProcessSubj };
 
 @Component({

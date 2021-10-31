@@ -9,6 +9,7 @@ import {
 import { Nullish } from '@shared/models/nullish';
 import { unwrapNullable } from '@shared/utils/unwrap-nullable';
 import { BehaviorSubject } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { State } from '@shared/models/response-state';
 import { Dictionary } from '@shared/models/dictionary';
@@ -24,42 +25,11 @@ import {
   getDateValue,
   getTextValue,
 } from '@shared/models/table';
-import { map } from 'rxjs/operators';
 import { trackByFn } from '@shared/utils/track-by.utils';
+import { resolveStateWithWarn } from '@shared/utils';
 
 type ColState = State<GridColumn>;
 type RowState = State<Row>;
-
-type StateWithWarn<T> =
-  | { readonly kind: 'warning'; readonly message: string }
-  | { readonly kind: 'ok'; readonly data: ReadonlyArray<T> };
-
-const resStateWithWarn =
-  (noDataMsg: string = 'No data') =>
-  <T>(state: State<T>): StateWithWarn<T> => {
-    const getMsg = (message: string): StateWithWarn<T> => ({
-      kind: 'warning',
-      message,
-    });
-
-    if (!state) {
-      return getMsg(noDataMsg);
-    }
-
-    if (state.kind === 'error') {
-      return getMsg('Error');
-    }
-
-    if (state.kind === 'loading') {
-      return getMsg('Loading...');
-    }
-
-    if (state.kind === 'ok' && state.data.length === 0) {
-      return getMsg(noDataMsg);
-    }
-
-    return state;
-  };
 
 @Component({
   selector: 'am-common-table',
@@ -82,7 +52,7 @@ export class CommonTableComponent implements OnInit {
   });
   readonly columnsState$ = this._columnsState$
     .asObservable()
-    .pipe(map(resStateWithWarn('No columns data')));
+    .pipe(map(resolveStateWithWarn('No columns data')));
 
   private readonly _rowsState$ = new BehaviorSubject<RowState>({
     kind: 'ok',
@@ -90,7 +60,7 @@ export class CommonTableComponent implements OnInit {
   });
   readonly rowsState$ = this._rowsState$
     .asObservable()
-    .pipe(map(resStateWithWarn('No rows data')));
+    .pipe(map(resolveStateWithWarn('No rows data')));
 
   readonly sortDescriptor = new Map<string, string>();
   readonly PredefinedAttr = PredefinedAttr;

@@ -43,7 +43,9 @@ export class AttributeConfiguratorComponent implements OnInit {
   }
 
   @Output() createColumn = new EventEmitter<CreateCol>();
+  /** FIXME AttrConfigBroadcastService */
   @Output() removeColumn = new EventEmitter<RemoveCol>();
+  /** FIXME AttrConfigBroadcastService */
   @Output() editColumn = new EventEmitter<Proc & EditColData>();
 
   readonly trackByFn = trackByFn;

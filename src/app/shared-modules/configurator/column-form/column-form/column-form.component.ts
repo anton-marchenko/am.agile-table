@@ -42,7 +42,9 @@ export class ColumnFormComponent implements OnInit, OnDestroy {
     });
   }
 
+  /** FIXME AttrConfigBroadcastService */
   @Output() removeColumn = new EventEmitter<Proc>();
+  /** FIXME AttrConfigBroadcastService */
   @Output() editColumn = new EventEmitter<Proc & EditColData>();
 
   readonly form = new FormGroup({

@@ -8,6 +8,9 @@ export const createForm = (
   const acc: {
     explicit: { [key: string]: FormControl };
     attributed: {
+      // FIXME - key is only string
+      // FIXME - use text: ReadonlyArray<T> instead
+      // Then text[index] will work
       text: { [key: number]: FormControl };
       date: { [key: number]: FormControl };
       multiList: { [key: number]: FormControl };

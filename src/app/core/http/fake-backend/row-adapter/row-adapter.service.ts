@@ -5,6 +5,9 @@ import { Cells } from '@shared/models/table/common/cell';
 import { RowDS, Row } from '@shared/models/table/common/row';
 import { RowDTO } from '@shared/models/table/common/row-dto';
 
+// FIXME - key is only string
+// FIXME - use text: ReadonlyArray<T> instead
+// Then text[index] will work
 const resolveSingleValue = <T>(entries: { [key: number]: T }) =>
   Object.entries(entries).map(([attributeId, value]) => ({
     attributeId: +attributeId,

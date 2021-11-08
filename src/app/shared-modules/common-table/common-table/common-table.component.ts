@@ -62,6 +62,7 @@ export class CommonTableComponent implements OnInit {
     .asObservable()
     .pipe(map(resolveStateWithWarn('No rows data')));
 
+  // FIXME - use WeakMap
   readonly sortDescriptor = new Map<string, string>();
   readonly PredefinedAttr = PredefinedAttr;
   readonly getTextValue = getTextValue;

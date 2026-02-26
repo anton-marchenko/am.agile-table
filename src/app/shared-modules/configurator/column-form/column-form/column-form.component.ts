@@ -7,7 +7,7 @@ import {
   Output,
   EventEmitter,
 } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { EditColHandler } from '@shared/models/edit-col-handler';
 import { ProcessingState, ProcessSubj } from '@shared/models/processing-state';
 import { GridColumn } from '@shared/models/table';
@@ -22,10 +22,11 @@ type EditColData = {
 type Proc = { processing$: ProcessSubj };
 
 @Component({
-  selector: 'am-column-form',
-  templateUrl: './column-form.component.html',
-  styleUrls: ['./column-form.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'am-column-form',
+    templateUrl: './column-form.component.html',
+    styleUrls: ['./column-form.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class ColumnFormComponent implements OnInit, OnDestroy {
   @Input() set canRemove(canRemove: boolean) {
@@ -47,11 +48,11 @@ export class ColumnFormComponent implements OnInit, OnDestroy {
   /** FIXME AttrConfigBroadcastService */
   @Output() editColumn = new EventEmitter<Proc & EditColData>();
 
-  readonly form = new FormGroup({
-    alias: new FormControl(null),
-    name: new FormControl(null),
-    width: new FormControl(null),
-    sortable: new FormControl(null),
+  readonly form = new UntypedFormGroup({
+    alias: new UntypedFormControl(null),
+    name: new UntypedFormControl(null),
+    width: new UntypedFormControl(null),
+    sortable: new UntypedFormControl(null),
   });
 
   readonly canRemove$ = new BehaviorSubject<boolean>(false);

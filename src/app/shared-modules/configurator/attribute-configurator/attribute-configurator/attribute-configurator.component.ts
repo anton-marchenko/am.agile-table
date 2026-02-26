@@ -32,10 +32,11 @@ type EditColData = {
 };
 
 @Component({
-  selector: 'am-attribute-configurator',
-  templateUrl: './attribute-configurator.component.html',
-  styleUrls: ['./attribute-configurator.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'am-attribute-configurator',
+    templateUrl: './attribute-configurator.component.html',
+    styleUrls: ['./attribute-configurator.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class AttributeConfiguratorComponent implements OnInit {
   @Input() set columnsState(state: ColState) {

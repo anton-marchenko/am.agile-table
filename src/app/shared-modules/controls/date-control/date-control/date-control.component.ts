@@ -9,17 +9,18 @@ import {
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
-  selector: 'am-date-control',
-  templateUrl: './date-control.component.html',
-  styleUrls: ['./date-control.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => DateControlComponent),
-      multi: true,
-    },
-  ],
+    selector: 'am-date-control',
+    templateUrl: './date-control.component.html',
+    styleUrls: ['./date-control.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    providers: [
+        {
+            provide: NG_VALUE_ACCESSOR,
+            useExisting: forwardRef(() => DateControlComponent),
+            multi: true,
+        },
+    ],
+    standalone: false
 })
 export class DateControlComponent implements OnInit {
   @Input() type: 'time' | 'datetime-local' | 'date' = 'datetime-local';

@@ -11,10 +11,11 @@ import { Nullish } from '@shared/models/nullish';
 import { BehaviorSubject } from 'rxjs';
 
 @Component({
-  selector: 'am-sort-title',
-  templateUrl: './sort-title.component.html',
-  styleUrls: ['./sort-title.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'am-sort-title',
+    templateUrl: './sort-title.component.html',
+    styleUrls: ['./sort-title.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class SortTitleComponent implements OnInit {
   @Input() set dir(dir: SortDirection) {

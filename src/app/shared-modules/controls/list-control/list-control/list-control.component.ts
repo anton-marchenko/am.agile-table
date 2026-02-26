@@ -12,17 +12,18 @@ import { ResponseState } from '@shared/models/response-state';
 import { trackByFn } from '@shared/utils/track-by.utils';
 
 @Component({
-  selector: 'am-list-control',
-  templateUrl: './list-control.component.html',
-  styleUrls: ['./list-control.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => ListControlComponent),
-      multi: true,
-    },
-  ],
+    selector: 'am-list-control',
+    templateUrl: './list-control.component.html',
+    styleUrls: ['./list-control.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    providers: [
+        {
+            provide: NG_VALUE_ACCESSOR,
+            useExisting: forwardRef(() => ListControlComponent),
+            multi: true,
+        },
+    ],
+    standalone: false
 })
 export class ListControlComponent<T> implements OnInit, ControlValueAccessor {
   @Input() multiple = false;

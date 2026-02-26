@@ -6,7 +6,7 @@ import {
   Output,
   EventEmitter,
 } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { createForm } from '@shared-modules/row-edit-form/row-edit-form/create-form.utils';
 import { ProcessingState, ProcessSubj } from '@shared/models/processing-state';
 import { State } from '@shared/models/response-state';
@@ -20,10 +20,11 @@ import { BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 @Component({
-  selector: 'am-row-edit-form',
-  templateUrl: './row-edit-form.component.html',
-  styleUrls: ['./row-edit-form.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'am-row-edit-form',
+    templateUrl: './row-edit-form.component.html',
+    styleUrls: ['./row-edit-form.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class RowEditFormComponent implements OnInit {
   @Input() set columnsState(colState: State<GridColumn>) {
@@ -54,7 +55,7 @@ export class RowEditFormComponent implements OnInit {
 
   readonly trackByFn = trackByFn;
 
-  readonly data$ = new BehaviorSubject<{ form: FormGroup | null }>({
+  readonly data$ = new BehaviorSubject<{ form: UntypedFormGroup | null }>({
     form: null,
   });
 
@@ -80,17 +81,17 @@ export class RowEditFormComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  getControl(form: FormGroup, fieldName: string) {
+  getControl(form: UntypedFormGroup, fieldName: string) {
     // FIXME
     // https://stackoverflow.com/questions/59284894/type-abstractcontrol-is-missing-the-following-properties-from-type-formgroup
-    return unwrapNullable(form.get(fieldName)) as FormControl;
+    return unwrapNullable(form.get(fieldName)) as UntypedFormControl;
   }
 
   onClose() {
     this.close.emit();
   }
 
-  onSave(form: FormGroup) {
+  onSave(form: UntypedFormGroup) {
     // TODO ################################
     // some validators in particular status
     // some - in all status (picture size)

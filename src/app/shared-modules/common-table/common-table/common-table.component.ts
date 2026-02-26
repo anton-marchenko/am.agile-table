@@ -32,10 +32,11 @@ type ColState = State<GridColumn>;
 type RowState = State<Row>;
 
 @Component({
-  selector: 'am-common-table',
-  templateUrl: './common-table.component.html',
-  styleUrls: ['./common-table.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'am-common-table',
+    templateUrl: './common-table.component.html',
+    styleUrls: ['./common-table.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class CommonTableComponent implements OnInit {
   @Input() set columnsState(state: ColState) {

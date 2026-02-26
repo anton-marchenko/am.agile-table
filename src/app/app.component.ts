@@ -12,10 +12,11 @@ import { RowDTO } from '@shared/models/table/common/row-dto';
 import { RowBackendService } from '@core/http/fake-backend/row-backend.service';
 
 @Component({
-  selector: 'am-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'am-root',
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class AppComponent implements OnInit {
   readonly showEditForm$ = new BehaviorSubject<boolean>(false);

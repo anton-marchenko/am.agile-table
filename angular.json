@@ -19,17 +19,21 @@
       "prefix": "am",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/agile-table",
+            "outputPath": {
+              "base": "dist/agile-table"
+            },
             "index": "src/index.html",
-            "main": "src/main.ts",
-            "polyfills": "src/polyfills.ts",
+            "polyfills": [
+              "src/polyfills.ts"
+            ],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": ["src/favicon.ico", "src/assets"],
             "styles": ["src/styles.scss"],
-            "scripts": []
+            "scripts": [],
+            "browser": "src/main.ts"
           },
           "configurations": {
             "production": {
@@ -54,9 +58,7 @@
               "outputHashing": "all"
             },
             "development": {
-              "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
@@ -68,10 +70,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "agile-table:build:production"
+              "buildTarget": "agile-table:build:production"
             },
             "development": {
-              "browserTarget": "agile-table:build:development"
+              "buildTarget": "agile-table:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -79,7 +81,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "agile-table:build"
+            "buildTarget": "agile-table:build"
           }
         },
         "test": {
@@ -97,6 +99,5 @@
         }
       }
     }
-  },
-  "defaultProject": "agile-table"
+  }
 }
